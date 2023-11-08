@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "lyndon-exa-data"
+version = "0.1.0"
+description = ""
+authors = ["Lyndon Fan <lyndon0808@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+pandas = "^2.1.2"
+"fhir.resources" = "^7.0.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.10.1"
+ruff = "^0.1.4"
+python-dotenv = "^1.0.0"
+pytest-mock = "^3.12.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

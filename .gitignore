@@ -1,6 +1,7 @@
 # intermediate states
 *.pyc
 .terraform*
+.venv/
 
 # possible debug files
 *.json
