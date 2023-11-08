@@ -1,0 +1,13 @@
+# intermediate states
+*.pyc
+.terraform*
+
+# possible debug files
+*.json
+!data/*.json
+
+# local storage of keys / credentials
+.env
+.keys/
+*.txt
+!requirements.txt
