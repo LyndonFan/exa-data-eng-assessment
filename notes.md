@@ -18,3 +18,22 @@ This is needed since I have to know what I'm looking at. The requirements are a 
 ### Play around
 
 This stage is just playing around with data to see what it looks like. Often this is openning up the data in a text editor / VSCode to see what the columns are, and inspect the data by eye. I migth run some code in the Python REPL using command line.
+
+```
+from fhir.resources.bundle import Bundle
+from pathlib import Path
+
+path = Path('data/Aaron697_Dickens475_8c95253e-8ee8-9ae8-6d40-021d702dc78e.json')
+bundle = Bundle.parse_file(path)
+```
+
+This got a bunch of validation errors, with 3 different types:
+
+-   `entry -> 1 -> resource -> class, value is not a valid list (type=type_error.list)`
+-   `entry -> 1 -> resource -> participant -> 0 -> individual, extra fields not permitted (type=value_error.extra)`
+-   `entry -> 7 -> resource -> contained -> 1 -> __root__ -> kind, field required (type=value_error.missing)`
+
+So this means one or more of:
+
+-   learn more about the FHIR resource type
+-   the data needs cleaning
