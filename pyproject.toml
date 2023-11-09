@@ -9,6 +9,7 @@ readme = "README.md"
 python = ">=3.11,<3.13"
 pandas = "^2.1.2"
 "fhir.resources" = "^7.0.2"
+orjson = "^3.9.10"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.10.1"
