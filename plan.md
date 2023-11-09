@@ -59,7 +59,7 @@ Criteria:
     -   most familiar
 -   key value pair
     -   fast, do-able with the <100 files?
-    -   like redis. Used a handful of times,
+    -   like redis. Used a handful of times, but not most familiar
 -   graph db
     -   maintain relationships -- if any!
     -   unfamiliar
