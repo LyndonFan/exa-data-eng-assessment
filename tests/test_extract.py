@@ -2,7 +2,7 @@ import pytest
 
 from fhir.resources.R4B.bundle import Bundle
 
-from src.extract import Extractor
+from src.extract.extract import Extractor
 
 
 class TestExtractor:
