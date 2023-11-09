@@ -71,22 +71,24 @@ It seems like we should do this for all jsons to get a better understanding.
 -   some fields are custom / use extensions
 -   later entries use references instead of full definitions
 
-
 ## Plan
 
-- start writing up plan.md
-- finished extract -- great! (just making a library call)
+-   start writing up plan.md
+-   finished extract -- great! (just making a library call)
 
-- spent some time trying to think of sturctured db schema, but not sure about
-    - which columns to pick (so many!)
-    - most columns have cardinality "0..*", so are in nested / list format
+-   spent some time trying to think of sturctured db schema, but not sure about:
 
-- start spending time on mongodb?
-    - still not sure about what transformations to do
-    - try doing no extra pre-processing, just save it in Mongo
-    -> Works!
+    -   which columns to pick (so many!)
+    -   most columns have cardinality "0..\*", so are in nested / list format
 
-- naively pass in all jsons through main.py at this state:
+-   start spending time on mongodb?
+
+    -   still not sure about what transformations to do
+    -   try doing no extra pre-processing, just save it in Mongo
+        -> Works!
+
+-   naively pass in all jsons through main.py at this state:
+
 ```bash
 >> time (for fname in $(find data -type f -name "*.json"); do python main.py $fname; done)
 (debug messages skipped)
@@ -94,4 +96,17 @@ real    11m39.688s
 user    1m14.167s
 sys     0m8.719s
 ```
+
 ... yeah, that's too slow.
+
+-   changed code to process all files first, then upload all at once:
+
+```bash
+time python main.py ./data
+(debug messages skipped)
+real    2m32.230s
+user    1m22.853s
+sys     0m1.586s
+```
+
+Better! But it's not doing a lot at the moment.
