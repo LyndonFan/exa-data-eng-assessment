@@ -70,3 +70,17 @@ It seems like we should do this for all jsons to get a better understanding.
 -   no. of entries ranges from 118 to 7825
 -   some fields are custom / use extensions
 -   later entries use references instead of full definitions
+
+
+## Plan
+
+- start writing up plan.md
+- finished extract -- great! (just making a library call)
+
+- spent some time trying to think of sturctured db schema, but not sure about
+    - which columns to pick (so many!)
+    - most columns have cardinality "0..*", so are in nested / list format
+
+- start spending time on mongodb?
+    - still not sure about what transformations to do
+    - try doing no extra pre-processing, just save it in Mongo
