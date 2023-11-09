@@ -40,7 +40,6 @@ class Loader:
                 raise ValueError(f"Missing resourceType for {i}th entry: {data[i]}")
             collection = data[i]["resourceType"]
             to_upload_locations.setdefault(collection, []).append(i)
-        print()
         for collection, indices in to_upload_locations.items():
             self.db.client.get_database("exa-data")[collection].insert_many([
                 data[i] for i in indices

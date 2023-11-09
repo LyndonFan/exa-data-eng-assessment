@@ -84,3 +84,14 @@ It seems like we should do this for all jsons to get a better understanding.
 - start spending time on mongodb?
     - still not sure about what transformations to do
     - try doing no extra pre-processing, just save it in Mongo
+    -> Works!
+
+- naively pass in all jsons through main.py at this state:
+```bash
+>> time (for fname in $(find data -type f -name "*.json"); do python main.py $fname; done)
+(debug messages skipped)
+real    11m39.688s
+user    1m14.167s
+sys     0m8.719s
+```
+... yeah, that's too slow.
