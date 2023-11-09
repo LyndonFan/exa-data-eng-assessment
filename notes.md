@@ -37,3 +37,36 @@ So this means one or more of:
 
 -   learn more about the FHIR resource type
 -   the data needs cleaning
+
+Turns out it's the former! Judging from the data's date (around 2020), and the list of published version (https://hl7.org/fhir/directory.html) it seems like the data conforms to R4 or R4B standard, not the latest R5. Just to have keep that in mind.
+
+Luckily, the `fhir.resources` library has support for R4 standard like so:
+
+```
+from fhir.resources.r4b.bundle import Bundle
+from pathlib import Path
+
+path = Path('data/Aaron697_Dickens475_8c95253e-8ee8-9ae8-6d40-021d702dc78e.json')
+bundle = Bundle.parse_file(path)
+```
+
+It worked! Now to actually look into what it has.
+
+The Bundle has type of transaction, which is a list of more resources.
+
+```python
+from collections import Counter
+
+entry_types = [
+    entry.resource.resource_type
+    for entry in bundle.entry
+]
+entry_counter = Counter(entry_types)
+```
+
+It seems like we should do this for all jsons to get a better understanding.
+
+-   entry-level resource_types aren't that diverse? They all start with Patient, then others
+-   no. of entries ranges from 118 to 7825
+-   some fields are custom / use extensions
+-   later entries use references instead of full definitions
