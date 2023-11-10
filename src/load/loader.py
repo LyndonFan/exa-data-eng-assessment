@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 class Mongo:
     _instance = None
 
@@ -14,7 +15,7 @@ class Mongo:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
-    
+
     def __init__(self):
         uri_to_format = os.getenv("MONGO_URI", "")
         uri_to_format = uri_to_format.replace("<user>", "{user}")
@@ -24,14 +25,15 @@ class Mongo:
             password=urllib.parse.quote_plus(os.getenv("MONGO_PASSWORD", "")),
         )
         self.client = pymongo.MongoClient(uri)
-    
+
     def get_database(self) -> pymongo.database.Database:
         return self.client.get_database("exa-data")
+
 
 class Loader:
     def __init__(self):
         self.db = Mongo().get_database()
-    
+
     def upload(self, data: list[dict[str, Any]]) -> None:
         to_upload_locations = {}
         id_references = []
@@ -44,9 +46,9 @@ class Loader:
                 raise ValueError(f"Missing resourceType for {i}th entry: {data[i]}")
             collection = data[i]["resourceType"]
             to_upload_locations.setdefault(collection, []).append(i)
-            id_references.append({"_id": data[i]["_id"], "resourceType": data[i]["resourceType"]})
+            id_references.append(
+                {"_id": data[i]["_id"], "resourceType": data[i]["resourceType"]}
+            )
         for collection, indices in to_upload_locations.items():
-            self.db.get_collection(collection).insert_many([
-                data[i] for i in indices
-            ])
+            self.db.get_collection(collection).insert_many([data[i] for i in indices])
         self.db.get_collection("IDReferences").insert_many(id_references)

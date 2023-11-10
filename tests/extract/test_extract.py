@@ -12,7 +12,7 @@ class TestExtractor:
         expected_entries = bundle.entry
         actual_entries = Extractor().extract(transaction_bundle_path)
         assert expected_entries == actual_entries
-    
+
     @pytest.mark.xfail
     def test_extract_not_bundle(self):
         patient_bundle_path = "tests/fixtures/patient.json"

@@ -5,12 +5,14 @@ from pathlib import Path
 from typing import Any
 
 from fsspec.implementations.local import LocalFileSystem
+
 # from gcsfs import GCSFileSystem
 from fhir.resources.R4B.bundle import Bundle, BundleEntry
 
 from dotenv import load_dotenv
 
 load_dotenv()
+
 
 class Extractor:
     def __init__(self, filesystem: str = "local"):
@@ -28,7 +30,11 @@ class Extractor:
         # not use ":" as windows or other file systems may think it's special
         upload_time_string = time_now.isoformat(timespec="seconds").replace(":", "-")
         new_base_name = f"{original_path.stem}_{upload_time_string}.json"
-        new_path = Path(self.bucket) / f"upload_date={time_now.strftime('%Y-%m-%d')}" / new_base_name
+        new_path = (
+            Path(self.bucket)
+            / f"upload_date={time_now.strftime('%Y-%m-%d')}"
+            / new_base_name
+        )
         with self.fs.open(new_path, "w") as f:
             f.write(orjson.dumps(data).decode("utf-8"))
 
@@ -41,4 +47,4 @@ class Extractor:
             raise ValueError(f"Expected transaction bundle, got {bundle.type}")
         if bundle.entry is None:
             raise ValueError(f"Expected bundle entry, got {bundle.entry}")
-        return bundle.entry # type: ignore
+        return bundle.entry  # type: ignore

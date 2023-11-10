@@ -32,7 +32,9 @@ def main(filepath: Path) -> None:
     print("Uploading...")
     Loader().upload(documents)
     print("Done")
-    
+
+
 if __name__ == "__main__":
     import sys
+
     main(Path(sys.argv[1]))
