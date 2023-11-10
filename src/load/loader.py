@@ -24,13 +24,17 @@ class Mongo:
             password=urllib.parse.quote_plus(os.getenv("MONGO_PASSWORD", "")),
         )
         self.client = pymongo.MongoClient(uri)
+    
+    def get_database(self) -> pymongo.database.Database:
+        return self.client.get_database("exa-data")
 
 class Loader:
     def __init__(self):
-        self.db = Mongo()
+        self.db = Mongo().get_database()
     
     def upload(self, data: list[dict[str, Any]]) -> None:
         to_upload_locations = {}
+        id_references = []
         for i in range(len(data)):
             if "id" in data[i]:
                 data[i]["_id"] = data[i]["id"]
@@ -40,7 +44,9 @@ class Loader:
                 raise ValueError(f"Missing resourceType for {i}th entry: {data[i]}")
             collection = data[i]["resourceType"]
             to_upload_locations.setdefault(collection, []).append(i)
+            id_references.append({"_id": data[i]["_id"], "resourceType": data[i]["resourceType"]})
         for collection, indices in to_upload_locations.items():
-            self.db.client.get_database("exa-data")[collection].insert_many([
+            self.db.get_collection(collection).insert_many([
                 data[i] for i in indices
             ])
+        self.db.get_collection("IDReferences").insert_many(id_references)
