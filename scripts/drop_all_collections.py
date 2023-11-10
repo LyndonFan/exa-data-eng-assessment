@@ -8,15 +8,10 @@ load_dotenv()
 
 
 def drop_all_collections():
-    uri_to_format = os.getenv("MONGO_URI", "")
-    uri_to_format = uri_to_format.replace("<user>", "{user}")
-    uri_to_format = uri_to_format.replace("<password>", "{password}")
-    uri = uri_to_format.format(
-        user=urllib.parse.quote_plus(os.getenv("MONGO_USER", "")),
-        password=urllib.parse.quote_plus(os.getenv("MONGO_PASSWORD", "")),
-    )
+    uri = os.environ["MONGO_URI"]
+    database_name = os.environ["MONGO_DB"]
     client = pymongo.MongoClient(uri)
-    database = client.get_database("exa-data")
+    database = client.get_database(database_name)
     for collection_name in database.list_collection_names():
         database.drop_collection(collection_name)
 

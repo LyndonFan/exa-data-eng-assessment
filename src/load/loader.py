@@ -17,17 +17,11 @@ class Mongo:
         return cls._instance
 
     def __init__(self):
-        uri_to_format = os.getenv("MONGO_URI", "")
-        uri_to_format = uri_to_format.replace("<user>", "{user}")
-        uri_to_format = uri_to_format.replace("<password>", "{password}")
-        uri = uri_to_format.format(
-            user=urllib.parse.quote_plus(os.getenv("MONGO_USER", "")),
-            password=urllib.parse.quote_plus(os.getenv("MONGO_PASSWORD", "")),
-        )
-        self.client = pymongo.MongoClient(uri)
+        self.client = pymongo.MongoClient(os.environ["MONGO_URI"])
+        self.database_name = os.environ["MONGO_DB"]
 
     def get_database(self) -> pymongo.database.Database:
-        return self.client.get_database("exa-data")
+        return self.client.get_database(self.database_name)
 
 
 class Loader:
