@@ -110,3 +110,17 @@ sys     0m1.586s
 ```
 
 Better! But it's not doing a lot at the moment.
+
+## Unsure about next steps
+
+### Where uncertain?
+
+-   Loaded into Mongo but still nested and not convenient for data team
+-   Not sure which
+
+--> Just ask!
+
+### Response
+
+-   import existing FHIR libraries to make it easier to process
+-   Pick a few resources that, **in my opinion**, would be useful to a researcher/analyst
