@@ -1,7 +1,6 @@
 from typing import Type, Any
 from fhir.resources.R4B.resource import Resource
 from src.transform.base_transform import BaseTransform
-from src.transform.default_transform import DefaultTransform
 
 
 class TransformFactory:
@@ -26,5 +25,8 @@ class TransformFactory:
 
     @classmethod
     def transform(cls, resource: Resource) -> dict[str, Any]:
-        corr_transformer = cls._registry.get(resource.resource_type, DefaultTransform)
+        resource_type = resource.resource_type
+        if resource_type not in cls._registry:
+            resource_type = "Default"
+        corr_transformer = cls._registry[resource_type]
         return corr_transformer().transform(resource)

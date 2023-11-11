@@ -32,12 +32,7 @@ class Loader:
         to_upload_locations = {}
         id_references = []
         for i in range(len(data)):
-            if "id" in data[i]:
-                data[i]["_id"] = data[i]["id"]
-            else:
-                print(f"Missing id for {i}th entry")
-            if "resourceType" not in data[i]:
-                raise ValueError(f"Missing resourceType for {i}th entry: {data[i]}")
+            data[i]["_id"] = data[i].pop("id")
             collection = data[i]["resourceType"]
             to_upload_locations.setdefault(collection, []).append(i)
             id_references.append(
@@ -45,4 +40,4 @@ class Loader:
             )
         for collection, indices in to_upload_locations.items():
             self.db.get_collection(collection).insert_many([data[i] for i in indices])
-        self.db.get_collection("IDReferences").insert_many(id_references)
+        self.db.get_collection("IDReference").insert_many(id_references)
