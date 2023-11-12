@@ -27,3 +27,7 @@ ipython = "^8.17.2"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+[tool.ruff.lint.extend-per-file-ignores]
+"__init__.py" = ["E402", "F401"]

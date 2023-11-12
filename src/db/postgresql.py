@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 class PostgreSQL:
     _instance = None
 
@@ -32,7 +33,7 @@ class PostgreSQL:
                 password=self.password,
                 dbname=self.database,
                 sslmode=self.ssl_mode,
-                sslrootcert=self.sslrootcert
+                sslrootcert=self.sslrootcert,
             )
         except Exception as e:
             print(f"Error connecting to PostgreSQL: {e}")
@@ -43,10 +44,10 @@ class PostgreSQL:
                 user=self.user,
                 password=self.password,
                 dbname=self.database,
-                sslmode="require"
+                sslmode="require",
             )
         return
-    
+
     def connection(self):
         if self._connection is None:
             self.connect()

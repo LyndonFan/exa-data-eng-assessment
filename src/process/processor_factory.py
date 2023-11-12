@@ -2,6 +2,7 @@ from typing import Optional, Type
 from fhir.resources.R4B.resource import Resource
 from .base_processor import BaseProcessor
 
+
 class ProcessorFactory:
     _registry = {}
 
@@ -12,16 +13,18 @@ class ProcessorFactory:
                 raise ValueError(f"Resource type {resource_type} already registered")
             cls._registry[resource_type] = processor_cls
             return processor_cls
-        
+
         return wrapper
-    
+
     @classmethod
-    def process_single_type(cls, data: list[Resource], resource_type: Optional[str] = None):
+    def process_single_type(
+        cls, data: list[Resource], resource_type: Optional[str] = None
+    ):
         if resource_type is None:
             resource_type = data[0].resource_type
         processor = cls._registry.get(resource_type, BaseProcessor)
         processor().process(data)
-    
+
     @classmethod
     def batch_process(cls, data: list[Resource]):
         groups = {}

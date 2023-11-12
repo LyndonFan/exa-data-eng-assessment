@@ -1,9 +1,11 @@
 from typing import Optional
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import String, Boolean, Date, DateTime
+from sqlalchemy import Date, DateTime
+
 
 class Base(DeclarativeBase):
     pass
+
 
 class Patient(Base):
     __tablename__ = "patient"
