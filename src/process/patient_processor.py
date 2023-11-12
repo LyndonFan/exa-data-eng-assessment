@@ -8,11 +8,18 @@ from src.db.mongo import Mongo
 from src.db.postgresql import PostgreSQL
 
 from src.process.base_processor import BaseProcessor
+from src.process.processor_factory import ProcessorFactory
 
+@ProcessorFactory.register("Patient")
 class PatientProcessor(BaseProcessor):
     def __init__(self):
         super().__init__()
         self.sql_db = PostgreSQL()
+    
+    @override
+    def process(self, data: list[Patient]):
+        super().process(data)
+        self.save_to_sql(data)
 
     def reformat_data_for_sql(self, data: list[Patient]) -> list[dict]:
         res = []
@@ -44,7 +51,6 @@ class PatientProcessor(BaseProcessor):
                 elif name.use == "maiden":
                     dct["maiden_name"] = name.text
             res.append(dct)
-            
         return res
     
     def save_to_sql(self, data: list[Patient]) -> None:

@@ -1,5 +1,5 @@
 import orjson
-from fhir.resources.R4B.resources import Resource
+from fhir.resources.R4B.resource import Resource
 
 from src.db.mongo import Mongo
 
