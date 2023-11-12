@@ -1,8 +1,7 @@
 from pathlib import Path
 
-from src.extract.extract import Extractor
-from src.transform.transform_factory import TransformFactory
-from src.load.loader import Loader
+from src.extract import Extractor
+from src.process import ProcessorFactory
 
 
 def main(filepath: Path) -> None:
@@ -13,24 +12,18 @@ def main(filepath: Path) -> None:
             print(f"Processing {path}")
             print("Extracting...")
             data = Extractor().extract(path)
-            print("Transforming...")
-            for entry in data:
-                transformed = TransformFactory.transform(entry.resource)
-                documents.append(transformed)
             print(f"Done for {path}")
+            documents.extend(data)
     elif filepath.is_file() and filepath.suffix == ".json":
         print(f"Processing {filepath}")
         print("Extracting...")
         data = Extractor().extract(filepath)
-        print("Transforming...")
-        for entry in data:
-            transformed = TransformFactory.transform(entry.resource)
-            documents.append(transformed)
+        documents = data
         print("Done")
     else:
         raise ValueError(f"Unsupported file type: {filepath}")
-    print("Uploading...")
-    Loader().upload(documents)
+    print("Processing & Uploading...")
+    ProcessorFactory.batch_process(documents)
     print("Done")
 
 
