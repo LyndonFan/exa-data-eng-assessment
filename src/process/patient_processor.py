@@ -1,8 +1,10 @@
 from datetime import datetime
 from io import StringIO
+from typing import Optional
 import pandas as pd
 import orjson
 from fhir.resources.R4B.patient import Patient
+from fhir.resources.R4B.humanname import HumanName
 
 from src.db.mongo import Mongo
 from src.db.postgresql import PostgreSQL
@@ -19,6 +21,17 @@ class PatientProcessor(BaseProcessor):
     def process(self, data: list[Patient]):
         super().process(data)
         self.save_to_sql(data)
+    
+    def _infer_name(self, name: HumanName) -> Optional[str]:
+        if name.text is not None:
+            return name.text
+        # below assumes a "western" name
+        # likely breaks on non-western names and/or missing/multiple values
+        if not name.given:
+            return None
+        if name.family:
+            return f"{name.given[0]} {name.family}"
+        return name.given[0]
 
     def reformat_data_for_sql(self, data: list[Patient]) -> list[dict]:
         res = []
@@ -46,9 +59,9 @@ class PatientProcessor(BaseProcessor):
             dct["maiden_name"] = None
             for name in patient.name:
                 if name.use == "official":
-                    dct["name"] = name.text
+                    dct["name"] = self._infer_name(name)
                 elif name.use == "maiden":
-                    dct["maiden_name"] = name.text
+                    dct["maiden_name"] = self._infer_name(name)
             res.append(dct)
         return res
     
