@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import String, Boolean, Date, DateTime
 
@@ -8,14 +9,14 @@ class Patient(Base):
     __tablename__ = "patient"
 
     id: Mapped[str] = mapped_column(primary_key=True)
-    active: Mapped[bool] = mapped_column(nullable=False)
-    name: Mapped[str]
-    maiden_name: Mapped[str]
-    gender: Mapped[str]
-    birth_date = mapped_column(Date)
-    deceased: Mapped[bool]
-    decease_datetime = mapped_column(DateTime)
-    martial_status: Mapped[str]
+    active: Mapped[Optional[bool]]
+    name: Mapped[Optional[str]]
+    maiden_name: Mapped[Optional[str]]
+    gender: Mapped[Optional[str]]
+    birth_date = mapped_column(Date, nullable=True)
+    deceased: Mapped[Optional[bool]]
+    deceased_datetime = mapped_column(DateTime, nullable=True)
+    martial_status: Mapped[Optional[str]]
 
 
 if __name__ == "__main__":
