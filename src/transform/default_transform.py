@@ -6,6 +6,7 @@ from fhir.resources.R4B.resource import Resource
 from .base_transform import BaseTransform
 from .transform_factory import TransformFactory
 
+
 @TransformFactory.register("Default")
 class DefaultTransform(BaseTransform):
     def transform(self, resource: Resource) -> dict[str, Any]:

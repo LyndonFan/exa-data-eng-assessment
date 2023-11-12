@@ -1,5 +1,5 @@
 import os
-from typing import Any, Optional
+from typing import Optional
 import pymongo
 
 from dotenv import load_dotenv
@@ -19,7 +19,9 @@ class Mongo:
         self.client = pymongo.MongoClient(os.environ["MONGO_URI"])
         self.database_name = os.environ["MONGO_DB"]
 
-    def get_database(self, database_name: Optional[str] = None) -> pymongo.database.Database:
+    def get_database(
+        self, database_name: Optional[str] = None
+    ) -> pymongo.database.Database:
         if database_name is None:
             database_name = self.database_name
         return self.client.get_database(database_name)
