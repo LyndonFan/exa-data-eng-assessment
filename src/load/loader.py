@@ -1,27 +1,5 @@
-import os
+from src.db.mongo import Mongo
 from typing import Any
-import urllib.parse
-import pymongo
-
-from dotenv import load_dotenv
-
-load_dotenv()
-
-
-class Mongo:
-    _instance = None
-
-    def __new__(cls) -> "Mongo":
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-
-    def __init__(self):
-        self.client = pymongo.MongoClient(os.environ["MONGO_URI"])
-        self.database_name = os.environ["MONGO_DB"]
-
-    def get_database(self) -> pymongo.database.Database:
-        return self.client.get_database(self.database_name)
 
 
 class Loader:
