@@ -1,3 +1,4 @@
+from typing import Optional, Type
 from fhir.resources.R4B.resource import Resource
 from .base_processor import BaseProcessor
 

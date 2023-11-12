@@ -16,7 +16,6 @@ class PatientProcessor(BaseProcessor):
         super().__init__()
         self.sql_db = PostgreSQL()
     
-    @override
     def process(self, data: list[Patient]):
         super().process(data)
         self.save_to_sql(data)
