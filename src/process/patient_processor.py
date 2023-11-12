@@ -23,8 +23,6 @@ class PatientProcessor(BaseProcessor):
     def reformat_data_for_sql(self, data: list[Patient]) -> list[dict]:
         res = []
         for patient in data:
-
-
             dct = {
                 "id": patient.id,
                 "active": patient.active,

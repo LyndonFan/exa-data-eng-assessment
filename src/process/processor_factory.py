@@ -30,5 +30,5 @@ class ProcessorFactory:
             if resource_type not in groups:
                 groups[resource_type] = []
             groups[resource_type].append(i)
-        for resource_type, group in groups.items():
-            cls.process_single_type([data[i] for i in group], resource_type)
+        for resource_type, indexes in groups.items():
+            cls.process_single_type([data[i] for i in indexes], resource_type)
