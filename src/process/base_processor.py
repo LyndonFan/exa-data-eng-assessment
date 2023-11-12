@@ -14,10 +14,10 @@ class BaseProcessor:
         ]
         for i in range(len(to_save_data)):
             to_save_data[i]["_id"] = to_save_data[i].pop("id")
-            to_save_data[i].pop("resource_type")
+            to_save_data[i].pop("resourceType")
         self.mongo.get_database().get_collection(resource_type).insert_many(to_save_data)
         id_references = [
-            {"_id": d["id"], "resource_type": resource_type}
+            {"_id": d["_id"], "resource_type": resource_type}
             for d in to_save_data
         ]
         self.mongo.get_database().get_collection("IDReference").insert_many(
