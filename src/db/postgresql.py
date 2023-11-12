@@ -1,5 +1,5 @@
 import os
-import psycopg
+import psycopg2
 
 from dotenv import load_dotenv
 
@@ -25,7 +25,7 @@ class PostgreSQL:
 
     def connect(self):
         try:
-            self._connection = psycopg.connect(
+            self._connection = psycopg2.connect(
                 host=self.host,
                 port=self.port,
                 user=self.user,
@@ -37,7 +37,7 @@ class PostgreSQL:
         except Exception as e:
             print(f"Error connecting to PostgreSQL: {e}")
             print("Trying sslmode=require...")
-            self._connection = psycopg.connect(
+            self._connection = psycopg2.connect(
                 host=self.host,
                 port=self.port,
                 user=self.user,
