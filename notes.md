@@ -124,3 +124,15 @@ Better! But it's not doing a lot at the moment.
 
 -   import existing FHIR libraries to make it easier to process
 -   Pick a few resources that, **in my opinion**, would be useful to a researcher/analyst
+
+## Rethink code logic and data model
+
+-   current method works, but is a bit too simple?
+    -   just copy and paste, not much effort done
+-   ~~can do some cleaning even **before** putting into Mongo~~
+-   then even more when put into SQL database
+    -   only model "useful" resources (mentioned above >1 times):
+        -   Patient: first and foremost
+        -
+
+###
