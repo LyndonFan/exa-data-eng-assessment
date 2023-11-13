@@ -21,6 +21,19 @@ class Patient(Base):
     martial_status: Mapped[Optional[str]]
 
 
+class Encounter(Base):
+    __tablename__ = "encounter"
+
+    id: Mapped[str] = mapped_column(primary_key=True)
+
+
+class Observtaion(Base):
+    __tablename__ = "observation"
+
+    id: Mapped[str] = mapped_column(primary_key=True)
+    status: Mapped[str]
+    patient_id: Mapped[str]
+
 if __name__ == "__main__":
     from src.db.postgresql import PostgreSQL
     from sqlalchemy.engine import create_engine
