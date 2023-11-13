@@ -25,7 +25,13 @@ class Encounter(Base):
     __tablename__ = "encounter"
 
     id: Mapped[str] = mapped_column(primary_key=True)
-
+    status: Mapped[str]
+    patient_id: Mapped[str]
+    class_code: Mapped[Optional[str]]
+    period_start = mapped_column(DateTime, nullable=True)
+    period_end = mapped_column(DateTime, nullable=True)
+    reason: Mapped[Optional[str]]
+    location: Mapped[Optional[str]]
 
 class Observtaion(Base):
     __tablename__ = "observation"
