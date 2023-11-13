@@ -133,6 +133,22 @@ Better! But it's not doing a lot at the moment.
 -   then even more when put into SQL database
     -   only model "useful" resources (mentioned above >1 times):
         -   Patient: first and foremost
-        -
+        -   others (TBD)
 
-###
+(spent Sat and Sun restructuring it and working on)
+
+Phew! Some results:
+
+```bash
+time python main.py data
+(debug messages ignored)
+real    4m8.787s
+user    1m25.706s
+sys     0m2.856s
+```
+
+Things done by code:
+
+-   saved a local copy of each file
+-   uploaded all the resources into their respective collections in Mongo, plus an extra "IDReference" collection for looking up ids
+-   put a subset of Patient data into a postgresql for move convenience querying
