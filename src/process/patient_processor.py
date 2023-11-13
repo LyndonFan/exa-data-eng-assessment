@@ -1,6 +1,6 @@
 from typing import Optional
 from fhir.resources.R4B.patient import Patient
-from fhir.resources.R4B.humanname import HumanName
+import polars as pl
 
 from src.db.postgresql import PostgreSQL
 
@@ -29,8 +29,11 @@ class PatientProcessor(BaseProcessor):
             return f"{name.given[0]} {name.family}"
         return name.given[0]
 
-    def reformat_data_for_sql(self, data: list[Patient]) -> list[dict]:
+    def process_data_into_frame(self, data: list[Patient]) -> pl.DataFrame:
         res = []
+
+        # Unable to simply convert to pl.DataFrame
+        # runs into a ComputeError
         for patient in data:
             dct = {
                 "id": patient.id,
@@ -59,42 +62,9 @@ class PatientProcessor(BaseProcessor):
                 elif name.use == "maiden":
                     dct["maiden_name"] = self._infer_name(name)
             res.append(dct)
-        return res
+        
+        return pl.DataFrame(res)
 
     def save_to_sql(self, data: list[Patient]) -> None:
-        reformatted_data = self.reformat_data_for_sql(data)
-        with self.sql_db.connection() as conn:
-            with conn.cursor() as cursor:
-                insert_statement = """
-                    INSERT INTO patient
-                    (id, active, gender, birth_date, deceased, deceased_datetime, martial_status, name, maiden_name)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    ON CONFLICT (id) DO UPDATE
-                    SET 
-                        active = EXCLUDED.active,
-                        gender = EXCLUDED.gender,
-                        birth_date = EXCLUDED.birth_date,
-                        deceased = EXCLUDED.deceased,
-                        deceased_datetime = EXCLUDED.deceased_datetime,
-                        martial_status = EXCLUDED.martial_status,
-                        name = EXCLUDED.name,
-                        maiden_name = EXCLUDED.maiden_name
-                """
-
-                execute_data = [
-                    (
-                        row["id"],
-                        row["active"],
-                        row["gender"],
-                        row["birth_date"],
-                        row["deceased"],
-                        row["deceased_datetime"],
-                        row["martial_status"],
-                        row["name"],
-                        row["maiden_name"],
-                    )
-                    for row in reformatted_data
-                ]
-
-                cursor.executemany(insert_statement, execute_data)
-                conn.commit()
+        df = self.process_data_into_frame(data)
+        self.sql_db.copy_into_table(table_name="patient", df=df)
