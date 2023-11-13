@@ -7,7 +7,8 @@ from typing import Any
 from fsspec.implementations.local import LocalFileSystem
 
 # from gcsfs import GCSFileSystem
-from fhir.resources.R4B.bundle import Bundle, BundleEntry
+from fhir.resources.R4B.bundle import Bundle
+from fhir.resources.R4B.resource import Resource
 
 from dotenv import load_dotenv
 
@@ -38,7 +39,7 @@ class Extractor:
         with self.fs.open(new_path, "w") as f:
             f.write(orjson.dumps(data).decode("utf-8"))
 
-    def extract(self, payload_path: str | Path) -> list[BundleEntry]:
+    def extract(self, payload_path: str | Path) -> list[Resource]:
         with self.fs.open(payload_path, "rb") as f:
             data = orjson.loads(f.read())
         self.save_raw_file(data, Path(payload_path))
@@ -47,4 +48,4 @@ class Extractor:
             raise ValueError(f"Expected transaction bundle, got {bundle.type}")
         if bundle.entry is None:
             raise ValueError(f"Expected bundle entry, got {bundle.entry}")
-        return bundle.entry  # type: ignore
+        return [entry.resource for entry in bundle.entry]

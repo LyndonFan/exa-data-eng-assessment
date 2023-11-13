@@ -11,10 +11,11 @@ pandas = "^2.1.2"
 "fhir.resources" = "^7.0.2"
 orjson = "^3.9.10"
 sqlalchemy = "^2.0.23"
-psycopg = {extras = ["binary"], version = "^3.1.12"}
 fsspec = "^2023.10.0"
 pymongo = "^4.6.0"
 numpy = "^1.26.1"
+psycopg2-binary = "^2.9.9"
+sqlalchemy-cockroachdb = "^2.0.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.10.1"
@@ -26,3 +27,7 @@ ipython = "^8.17.2"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+[tool.ruff.lint.extend-per-file-ignores]
+"__init__.py" = ["E402", "F401"]
