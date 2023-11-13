@@ -1,5 +1,6 @@
 from typing import Optional
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey
 from sqlalchemy import Date, DateTime
 
 
@@ -20,25 +21,27 @@ class Patient(Base):
     deceased_datetime = mapped_column(DateTime, nullable=True)
     martial_status: Mapped[Optional[str]]
 
+    encounters: Mapped[list["Encounter"]] = relationship(back_populates="patient")
 
 class Encounter(Base):
     __tablename__ = "encounter"
 
     id: Mapped[str] = mapped_column(primary_key=True)
     status: Mapped[str]
-    patient_id: Mapped[str]
+    patient: Mapped[Patient] = relationship(back_populates="encounters")
+    patient_id: Mapped[str] = mapped_column(ForeignKey("patient.id"))
     class_code: Mapped[Optional[str]]
     period_start = mapped_column(DateTime, nullable=True)
     period_end = mapped_column(DateTime, nullable=True)
     reason: Mapped[Optional[str]]
     location: Mapped[Optional[str]]
 
-class Observtaion(Base):
-    __tablename__ = "observation"
+# class Observtaion(Base):
+#     __tablename__ = "observation"
 
-    id: Mapped[str] = mapped_column(primary_key=True)
-    status: Mapped[str]
-    patient_id: Mapped[str]
+#     id: Mapped[str] = mapped_column(primary_key=True)
+#     status: Mapped[str]
+#     patient_id: Mapped[str]
 
 if __name__ == "__main__":
     from src.db.postgresql import PostgreSQL
