@@ -152,3 +152,12 @@ Things done by code:
 -   saved a local copy of each file
 -   uploaded all the resources into their respective collections in Mongo, plus an extra "IDReference" collection for looking up ids
 -   put a subset of Patient data into a postgresql for move convenience querying
+
+### Extra objects to model
+
+-   Observation
+    -   most frequent resource
+    -   accounts for >21k resources, over a third
+-   Encounter
+    -   most frequently referenced resource
+        -   resource A "references" B if A has a (nested) field which points to B's id

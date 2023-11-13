@@ -16,6 +16,7 @@ pymongo = "^4.6.0"
 numpy = "^1.26.1"
 psycopg2-binary = "^2.9.9"
 sqlalchemy-cockroachdb = "^2.0.1"
+polars = "^0.19.13"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.10.1"
