@@ -12,3 +12,4 @@
 .keys/
 *.txt
 !requirements.txt
+!requirements-dev.txt
