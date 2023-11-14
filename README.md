@@ -9,7 +9,8 @@ This is a project that processes and stores FHIR data.
 1. Set up a Mongo and a Postgres database.
 2. Using.env.template as a reference, create and populate a new .env file.
 3. Create a new virtual environment using venv and requirements.txt or poetry and pyproject.toml
-4. Run `python main.py data`
+4. Run `python -m src.db.schema` to set up SQL tables.
+5. Run `python main.py data` for the main pipeline.
 
 ### Databases
 
@@ -38,7 +39,11 @@ poetry shell
 poetry install
 ```
 
-After installing and activating the environment, you can run the main pipeline by
+After installing and activating the environment, first run below to set up the SQL tables:
+
+`python -m src.db.schema`
+
+Then you can run the main pipeline by
 
 `python main.py <DIRECTORY_OF_JSON_DATA>`
 
