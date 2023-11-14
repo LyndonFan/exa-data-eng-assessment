@@ -63,15 +63,17 @@ class ObservationProcessor(BaseProcessor):
                 if d.get(c) is not None:
                     d[c] = self._nested_replace_decimal(d[c])
                     d[c] = json.dumps(d[c])
+                else:
+                    d[c] = None
         
-        df = pl.DataFrame(dcts)
+        df = pl.DataFrame(dcts, schema_overrides={c: pl.Utf8 for c in VALUE_COLUMNS})
         df = df.with_columns(
             [
                 pl.col("code")
                 .struct.field('coding')
                 .list.get(0)
                 .struct.field('display')
-                .alias("observation_type"),
+                .alias("code"),
                 pl.col("category")
                 .list.get(0)
                 .struct.field('coding')
@@ -90,15 +92,16 @@ class ObservationProcessor(BaseProcessor):
                 ).alias("encounter_id"),
             ]
         )
-        df = df.with_columns(pl.coalesce(
+
+        df = df.with_columns(pl.coalesce([
             pl.when(pl.col("valueQuantity").is_null()).then(pl.lit(None)).otherwise("[" + pl.col("valueQuantity") + "]"),
             pl.when(pl.col("valueCodeableConcept").is_null()).then(pl.lit(None)).otherwise("[" + pl.col("valueCodeableConcept") + "]"),
             pl.col("component"),
-        ).alias("values"))
-        df = df.drop(["code", "subject"] + VALUE_COLUMNS).rename(
+        ]).alias("values"))
+        
+        df = df.drop(["subject", "encounter"] + VALUE_COLUMNS).rename(
             {
-                "effectiveDateTime": "effective_datetime",
-                "component": "values",
+                "effectiveDateTime": "effective_datetime"
             }
         )
         return df
