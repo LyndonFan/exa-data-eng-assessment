@@ -11,6 +11,7 @@ from src.db.postgresql import PostgreSQL
 
 load_dotenv()
 
+
 class Base(DeclarativeBase):
     pass
 
@@ -63,13 +64,13 @@ class Observtaion(Base):
     issued = mapped_column(DateTime, nullable=True)
     values = mapped_column(JSON)
 
+
 def create_all_tables():
     db = PostgreSQL()
     engine_string = os.environ["PSQL_URI"].split("://")[0]
     engine = create_engine(engine_string + "://", creator=db.connection, echo=True)
     Base.metadata.create_all(engine)
 
+
 if __name__ == "__main__":
     create_all_tables()
-
-

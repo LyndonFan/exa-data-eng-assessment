@@ -19,7 +19,6 @@ class ObservationProcessor(BaseProcessor):
         super().process(data)
         self.save_to_sql(data)
 
-    
     def _nested_replace_decimal(self, d):
         # convert from decimal to float as polars can't decode it
         # note this does lose some precision which may be problematic
@@ -30,7 +29,7 @@ class ObservationProcessor(BaseProcessor):
                 else:
                     d[k] = self._nested_replace_decimal(v)
         elif isinstance(d, list):
-            for i,v in enumerate(d):
+            for i, v in enumerate(d):
                 if isinstance(v, decimal.Decimal):
                     d[i] = float(v)
                 else:
@@ -53,7 +52,7 @@ class ObservationProcessor(BaseProcessor):
             "component",
         ]
         dcts = [{field: d[field] for field in FIELDS if field in d} for d in dcts]
-        
+
         for d in dcts:
             components = []
             if d.get("component"):
@@ -68,7 +67,9 @@ class ObservationProcessor(BaseProcessor):
                     }
                 )
             if d.get("valueCodeableConcept"):
-                d["valueCodeableConcept"] = self._nested_replace_decimal(d["valueCodeableConcept"])
+                d["valueCodeableConcept"] = self._nested_replace_decimal(
+                    d["valueCodeableConcept"]
+                )
                 components.append(
                     {
                         "code": d["code"],
@@ -76,20 +77,20 @@ class ObservationProcessor(BaseProcessor):
                     }
                 )
             d["component"] = json.dumps(components)
-        
+
         df = pl.DataFrame(dcts)
         df = df.with_columns(
             [
                 pl.col("code")
-                .struct.field('coding')
+                .struct.field("coding")
                 .list.get(0)
-                .struct.field('display')
+                .struct.field("display")
                 .alias("observation_type"),
                 pl.col("category")
                 .list.get(0)
-                .struct.field('coding')
+                .struct.field("coding")
                 .list.get(0)
-                .struct.field('display')
+                .struct.field("display")
                 .alias("category"),
                 (
                     pl.col("subject")
@@ -114,5 +115,7 @@ class ObservationProcessor(BaseProcessor):
     def save_to_sql(self, data: list[Observation]) -> None:
         print(f"Start processing {len(data)} observations into sql")
         df = self.process_data_into_frame(data)
-        print(f"Start uploading to sql for observations")
-        self.sql_db.copy_into_table(table_name="observation", df=df, json_columns=["values"])
+        print("Start uploading to sql for observations")
+        self.sql_db.copy_into_table(
+            table_name="observation", df=df, json_columns=["values"]
+        )

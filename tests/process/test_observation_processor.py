@@ -8,11 +8,13 @@ from datetime import datetime
 from fhir.resources.R4B.observation import Observation
 from src.process.observation_processor import ObservationProcessor
 
+
 @pytest.fixture
 def mock_mongo(mocker):
     mock_mongo = mocker.Mock()
     mocker.patch("src.process.base_processor.Mongo", return_value=mock_mongo)
     yield mock_mongo
+
 
 @pytest.fixture
 def mock_sql(mocker):
@@ -20,10 +22,12 @@ def mock_sql(mocker):
     mocker.patch("src.process.observation_processor.PostgreSQL", return_value=mock_sql)
     yield mock_sql
 
+
 @pytest.fixture
 def processor(mock_mongo, mock_sql):
     processor = ObservationProcessor()
     yield processor
+
 
 def test_nested_replace_decimal(processor):
     dct = {
@@ -34,8 +38,8 @@ def test_nested_replace_decimal(processor):
             {
                 "field_str": "foo",
                 "field_decimal": Decimal("7.8"),
-            }
-        ]
+            },
+        ],
     }
     expected_dct = {
         "field_str": "bar",
@@ -45,10 +49,11 @@ def test_nested_replace_decimal(processor):
             {
                 "field_str": "foo",
                 "field_decimal": 7.8,
-            }
-        ]
+            },
+        ],
     }
     assert processor._nested_replace_decimal(dct) == expected_dct
+
 
 @pytest.fixture
 def observations():
@@ -62,7 +67,7 @@ def observations():
             category=[{"coding": [{"display": "Vital Signs"}]}],
             effectiveDateTime=datetime(2022, 1, 1),
             issued=datetime(2022, 1, 2),
-            valueQuantity={"value":Decimal("120"), "unit": "cm"},
+            valueQuantity={"value": Decimal("120"), "unit": "cm"},
             valueCodeableConcept=None,
             component=None,
         ),
@@ -93,16 +98,17 @@ def observations():
             component=[
                 {
                     "code": {"coding": [{"display": "Systolic Blood Pressure"}]},
-                    "valueQuantity": {"value":Decimal("120")},
+                    "valueQuantity": {"value": Decimal("120")},
                 },
                 {
                     "code": {"coding": [{"display": "Diastolic Blood Pressure"}]},
-                    "valueQuantity": {"value":Decimal("80")},
-                }
-            ]
-        )
+                    "valueQuantity": {"value": Decimal("80")},
+                },
+            ],
+        ),
     ]
     return observations
+
 
 @pytest.fixture
 def expected_df():
@@ -124,29 +130,38 @@ def expected_df():
             datetime(2022, 1, 4),
         ],
         "values": [
-            json.dumps([
-                {
-                    "code": {"coding": [{"display": "Height"}]},
-                    "valueQuantity": {"value": 120.0, "unit": "cm"},
-                }
-            ]),
-            json.dumps([{
-                "code": {"coding": [{"display": "Temperature"}]},
-                "valueCodeableConcept": {"coding": [{"display": "Fever"}]},
-            }]),
-            json.dumps([
-                {
-                    "code": {"coding": [{"display": "Systolic Blood Pressure"}]},
-                    "valueQuantity": {"value": 120.0},
-                },
-                {
-                    "code": {"coding": [{"display": "Diastolic Blood Pressure"}]},
-                    "valueQuantity": {"value": 80.0},
-                }
-            ]),
-        ]
+            json.dumps(
+                [
+                    {
+                        "code": {"coding": [{"display": "Height"}]},
+                        "valueQuantity": {"value": 120.0, "unit": "cm"},
+                    }
+                ]
+            ),
+            json.dumps(
+                [
+                    {
+                        "code": {"coding": [{"display": "Temperature"}]},
+                        "valueCodeableConcept": {"coding": [{"display": "Fever"}]},
+                    }
+                ]
+            ),
+            json.dumps(
+                [
+                    {
+                        "code": {"coding": [{"display": "Systolic Blood Pressure"}]},
+                        "valueQuantity": {"value": 120.0},
+                    },
+                    {
+                        "code": {"coding": [{"display": "Diastolic Blood Pressure"}]},
+                        "valueQuantity": {"value": 80.0},
+                    },
+                ]
+            ),
+        ],
     }
     return pl.DataFrame(values)
+
 
 def test_process_data_into_frame_type_columns(processor, observations):
     result = processor.process_data_into_frame(observations)
@@ -164,6 +179,9 @@ def test_process_data_into_frame_type_columns(processor, observations):
     ]
     assert set(result.columns) == set(expected_columns)
 
+
 def test_process_data_into_frame_correct_value(processor, observations, expected_df):
     result = processor.process_data_into_frame(observations)
-    assert_frame_equal(result, expected_df, check_column_order=False, check_row_order=False)
+    assert_frame_equal(
+        result, expected_df, check_column_order=False, check_row_order=False
+    )

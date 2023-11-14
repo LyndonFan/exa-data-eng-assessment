@@ -73,7 +73,12 @@ class PostgreSQL:
             self._connection.commit()
         return res
 
-    def copy_into_table(self, table_name: str, df: pl.DataFrame, json_columns: Optional[list[str]] = None):
+    def copy_into_table(
+        self,
+        table_name: str,
+        df: pl.DataFrame,
+        json_columns: Optional[list[str]] = None,
+    ):
         if json_columns is None:
             json_columns = []
         if not json_columns:
@@ -93,8 +98,5 @@ class PostgreSQL:
             con=engine,
             if_exists="append",
             index=False,
-            dtype={
-                col: JSON
-                for col in json_columns
-            }
+            dtype={col: JSON for col in json_columns},
         )

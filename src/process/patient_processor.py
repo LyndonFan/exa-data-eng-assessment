@@ -69,5 +69,5 @@ class PatientProcessor(BaseProcessor):
     def save_to_sql(self, data: list[Patient]) -> None:
         print(f"Start processing {len(data)} patients into sql")
         df = self.process_data_into_frame(data)
-        print(f"Start uploading to sql for patients")
+        print("Start uploading to sql for patients")
         self.sql_db.copy_into_table(table_name="patient", df=df)
