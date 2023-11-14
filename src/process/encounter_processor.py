@@ -63,5 +63,7 @@ class EncounterProcessor(BaseProcessor):
         return df
 
     def save_to_sql(self, data: list[Encounter]) -> None:
+        print(f"Start processing {len(data)} encounters into sql")
         df = self.process_data_into_frame(data)
+        print(f"Start uploading to sql for encounters")
         self.sql_db.copy_into_table(table_name="encounter", df=df)
