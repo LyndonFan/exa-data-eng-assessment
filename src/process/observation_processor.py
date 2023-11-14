@@ -46,6 +46,15 @@ class ObservationProcessor(BaseProcessor):
             "component",
         ]
         dcts = [{f: d.get(f) for f in FIELDS} for d in dcts]
+        VALUE_COLUMNS = [
+            "valueQuantity",
+            "valueCodeableConcept",
+            "component",
+        ]
+        for d in dcts:
+            for c in VALUE_COLUMNS:
+                if d.get(c) is not None:
+                    d[c] = d[c].json()
         self._nested_replace_decimal(dcts)
         df = pl.DataFrame(dcts)
         df = df.with_columns(
@@ -73,7 +82,12 @@ class ObservationProcessor(BaseProcessor):
                 ).alias("encounter_id"),
             ]
         )
-        df = df.drop(["code", "subject"]).rename(
+        df = df.with_columns(pl.coalesce(
+            pl.when(pl.col("valueQuantity").is_null).then(pl.lit(None)).otherwise("[" + pl.col("valueQuantity") + "]"),
+            pl.when(pl.col("valueCodeableConcept").is_null).then(pl.lit(None)).otherwise("[" + pl.col("valueCodeableConcept") + "]"),
+            pl.col("component"),
+        ).alias("values"))
+        df = df.drop(["code", "subject"] + VALUE_COLUMNS).rename(
             {
                 "effectiveDateTime": "effective_datetime",
                 "component": "values",

@@ -1,4 +1,5 @@
 import os
+import json
 import psycopg2
 import polars as pl
 from typing import Optional
@@ -85,6 +86,8 @@ class PostgreSQL:
             return
         pd_df = df.to_pandas()
         engine = create_engine(os.environ["PSQL_URI"])
+        for col in json_columns:
+            pd_df[col] = pd_df[col].fillna("").map(json.loads)
         pd_df.to_sql(
             table_name,
             con=engine,
