@@ -1,0 +1,10 @@
+.ruff_cache
+.keys
+.venv
+.env*
+*.md
+*.txt
+!requirements.txt
+poetry.lock
+pyproject.toml
+fhir-ingestion-raw

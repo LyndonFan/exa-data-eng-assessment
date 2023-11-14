@@ -48,4 +48,7 @@ To do this with the provided data, for example, run
 
 ### From Docker Image
 
-TBD
+1. Create the Mongo and SQL databases as above.
+2. Create the .env file as above.
+3. Run `docker build -t <YOUR_IMAGE_NAME>`
+4. Run `docker run --env-file ".env" <YOUR_IMAGE_NAME>`
