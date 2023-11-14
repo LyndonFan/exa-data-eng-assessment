@@ -1,7 +1,7 @@
 from typing import Optional
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
-from sqlalchemy import Date, DateTime
+from sqlalchemy import Date, DateTime, JSON
 
 
 class Base(DeclarativeBase):
@@ -22,6 +22,7 @@ class Patient(Base):
     martial_status: Mapped[Optional[str]]
 
     encounters: Mapped[list["Encounter"]] = relationship(back_populates="patient")
+    observations: Mapped[list["Observation"]] = relationship(back_populates="patient")
 
 class Encounter(Base):
     __tablename__ = "encounter"
@@ -36,12 +37,21 @@ class Encounter(Base):
     reason: Mapped[Optional[str]]
     location: Mapped[Optional[str]]
 
-# class Observtaion(Base):
-#     __tablename__ = "observation"
+    observations: Mapped[list["Observation"]] = relationship(back_populates="encounter")
 
-#     id: Mapped[str] = mapped_column(primary_key=True)
-#     status: Mapped[str]
-#     patient_id: Mapped[str]
+class Observtaion(Base):
+    __tablename__ = "observation"
+
+    id: Mapped[str] = mapped_column(primary_key=True)
+    code: Mapped[str]
+    patient: Mapped[Patient] = relationship(back_populates="observations")
+    patient_id: Mapped[str]
+    encounter: Mapped[Encounter] = relationship(back_populates="observations")
+    encounter_id: Mapped[str]
+    category: Mapped[Optional[str]]
+    effective_datetime = mapped_column(DateTime, nullable=True)
+    issued = mapped_column(DateTime, nullable=True)
+    values = mapped_column(JSON)
 
 if __name__ == "__main__":
     from src.db.postgresql import PostgreSQL
