@@ -43,7 +43,7 @@ class PatientProcessor(BaseProcessor):
                 "birth_date": patient.birthDate,
                 "deceased": patient.deceasedBoolean,
                 "deceased_datetime": patient.deceasedDateTime,
-                "martial_status": patient.maritalStatus,
+                "marital_status": patient.maritalStatus,
             }
 
             # as per comment in below link,
@@ -52,8 +52,8 @@ class PatientProcessor(BaseProcessor):
             if not dct["deceased"]:
                 dct["deceased"] = dct["deceased_datetime"] is not None
 
-            if dct["martial_status"] is not None:
-                dct["martial_status"] = dct["martial_status"].text
+            if dct["marital_status"] is not None:
+                dct["marital_status"] = dct["marital_status"].text
 
             dct["name"] = None
             dct["maiden_name"] = None

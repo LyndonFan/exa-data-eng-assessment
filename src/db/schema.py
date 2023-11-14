@@ -27,7 +27,7 @@ class Patient(Base):
     birth_date = mapped_column(Date, nullable=True)
     deceased: Mapped[Optional[bool]]
     deceased_datetime = mapped_column(DateTime, nullable=True)
-    martial_status: Mapped[Optional[str]]
+    marital_status: Mapped[Optional[str]]
 
     encounters: Mapped[list["Encounter"]] = relationship(back_populates="patient")
     observations: Mapped[list["Observation"]] = relationship(back_populates="patient")
