@@ -1,6 +1,6 @@
 from typing import Optional
 import polars as pl
-from fhir.resource.R4B.encounter import Encounter
+from fhir.resources.R4B.encounter import Encounter
 
 from src.db.postgresql import PostgreSQL
 
@@ -61,6 +61,6 @@ class EncounterProcessor(BaseProcessor):
         df = df.drop(["subject", "class", "period", "reasonCode"])
         return df
 
-    def save_to_sql(self, data: list[Patient]) -> None:
+    def save_to_sql(self, data: list[Encounter]) -> None:
         df = self.process_data_into_frame(data)
         self.sql_db.copy_into_table(table_name="encounter", df=df)

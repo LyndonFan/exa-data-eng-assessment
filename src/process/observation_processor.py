@@ -1,6 +1,6 @@
 from typing import Optional
 import polars as pl
-from fhir.resource.R4B.observation import Observation
+from fhir.resources.R4B.observation import Observation
 
 from src.db.postgresql import PostgreSQL
 
@@ -75,6 +75,6 @@ class ObservationProcessor(BaseProcessor):
         })
         return df
 
-    def save_to_sql(self, data: list[Patient]) -> None:
+    def save_to_sql(self, data: list[Observation]) -> None:
         df = self.process_data_into_frame(data)
         self.sql_db.copy_into_table(table_name="observation", df=df)

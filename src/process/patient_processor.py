@@ -1,5 +1,6 @@
 from typing import Optional
 from fhir.resources.R4B.patient import Patient
+from fhir.resources.R4B.humanname import HumanName
 import polars as pl
 
 from src.db.postgresql import PostgreSQL
