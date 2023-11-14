@@ -1,6 +1,7 @@
 import pytest
 import orjson
 from datetime import datetime
+from decimal import Decimal
 from fhir.resources.R4B.provenance import Provenance
 from fhir.resources.R4B.encounter import Encounter
 from fhir.resources.R4B.patient import Patient
@@ -19,88 +20,12 @@ def processsor(mock_mongo):
     return BaseProcessor()
 
 @pytest.fixture
-def patients():
-    return [
-        Patient(
-            id="1",
-            active=True,
-            name=[
-                {
-                    "use": "official",
-                    "family": "Doe",
-                    "given": ["John"],
-                    "text": "John Doe",
-                }
-            ],
-            gender="male",
-            birthDate=datetime(1990, 1, 1),
-            deceasedBoolean=False,
-            maritalStatus={
-                "text": "M",
-            },
-        ),
-        Patient(
-            id="2",
-            active=True,
-            name=[
-                {
-                    "use": "official",
-                    "family": "Smith",
-                    "given": ["Jane"],
-                },
-                {
-                    "use": "maiden",
-                    "family": "White",
-                    "given": ["Jane"],
-                },
-            ],
-            gender="female",
-            birthDate=datetime(1995, 12, 16),
-            deceasedBoolean=False,
-            maritalStatus={
-                "text": "M",
-            },
-        ),
-    ]
-
-@pytest.fixture
 def patient_dict(patients):
     dcts = [orjson.loads(orjson.dumps(patient.dict())) for patient in patients]
     for dct in dcts:
         dct["_id"] = dct.pop("id")
         dct.pop("resourceType")
     return dcts
-
-@pytest.fixture
-def encounters():
-    return [
-        Encounter(
-            id="1",
-            status="final",
-            subject={"reference": "urn:uuid:123"},
-            class_fhir={"code": "IMP"},
-            period={"start": datetime(2022, 1, 1), "end": datetime(2022, 1, 2)},
-            location=[
-                {
-                    "location": {
-                        "reference": "Location?MadeUp",
-                        "display": "MadeUp Location",
-                    }
-                }
-            ],
-            reasonCode=[
-                {
-                    "coding": [
-                        {
-                            "system": "http://snomed.info/sct",
-                            "code": "123",
-                            "display": "MadeUp Reason",
-                        }
-                    ]
-                }
-            ],
-        ),
-    ]
 
 @pytest.fixture
 def encounter_dict(encounters):
@@ -111,46 +36,18 @@ def encounter_dict(encounters):
     return dcts
 
 @pytest.fixture
-def observations():
-    return [
-        Observation(
-            id="2",
-            code={"coding": [{"display": "Temperature"}]},
-            status="final",
-            subject={"reference": "urn:uuid:789"},
-            encounter={"reference": "urn:uuid:012"},
-            category=[{"coding": [{"display": "Vital Signs"}]}],
-            effectiveDateTime=datetime(2022, 1, 3),
-            issued=datetime(2022, 1, 4),
-            valueQuantity=None,
-            valueCodeableConcept={"coding": [{"display": "Fever"}]},
-            component=None,
-        ),
-    ]
-
-@pytest.fixture
 def observation_dict(observations):
-    dcts = [orjson.loads(orjson.dumps(observation.dict())) for observation in observations]
+    def default_decimal(obj):
+        if isinstance(obj, Decimal):
+            return float(obj)
+        raise TypeError
+
+    dcts = [orjson.loads(orjson.dumps(observation.dict(), default=default_decimal)) for observation in observations]
     for dct in dcts:
         dct["_id"] = dct.pop("id")
         dct.pop("resourceType")
     return dcts
 
-@pytest.fixture
-def provenances():
-    return [
-        Provenance(
-            id="1",
-            recorded=datetime(2022, 1, 1, 12, 0, 0),
-            agent=[{"who":{"reference": "urn:uuid:123"}}],
-            target=[
-                {"reference": "urn:uuid:123"},
-                {"reference": "urn:uuid:456"},
-                {"reference": "urn:uuid:789"},
-                {"reference": "urn:uuid:012"},
-            ],
-        ),
-    ]
 
 @pytest.fixture
 def provenance_dict(provenances):

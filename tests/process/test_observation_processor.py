@@ -56,61 +56,6 @@ def test_nested_replace_decimal(processor):
 
 
 @pytest.fixture
-def observations():
-    observations = [
-        Observation(
-            id="1",
-            code={"coding": [{"display": "Height"}]},
-            status="final",
-            subject={"reference": "urn:uuid:123"},
-            encounter={"reference": "urn:uuid:456"},
-            category=[{"coding": [{"display": "Vital Signs"}]}],
-            effectiveDateTime=datetime(2022, 1, 1),
-            issued=datetime(2022, 1, 2),
-            valueQuantity={"value": Decimal("120"), "unit": "cm"},
-            valueCodeableConcept=None,
-            component=None,
-        ),
-        Observation(
-            id="2",
-            code={"coding": [{"display": "Temperature"}]},
-            status="final",
-            subject={"reference": "urn:uuid:789"},
-            encounter={"reference": "urn:uuid:012"},
-            category=[{"coding": [{"display": "Vital Signs"}]}],
-            effectiveDateTime=datetime(2022, 1, 3),
-            issued=datetime(2022, 1, 4),
-            valueQuantity=None,
-            valueCodeableConcept={"coding": [{"display": "Fever"}]},
-            component=None,
-        ),
-        Observation(
-            id="3",
-            code={"coding": [{"display": "Blood Pressure"}]},
-            status="final",
-            subject={"reference": "urn:uuid:789"},
-            encounter={"reference": "urn:uuid:012"},
-            category=[{"coding": [{"display": "Vital Signs"}]}],
-            effectiveDateTime=datetime(2022, 1, 3),
-            issued=datetime(2022, 1, 4),
-            valueQuantity=None,
-            valueCodeableConcept=None,
-            component=[
-                {
-                    "code": {"coding": [{"display": "Systolic Blood Pressure"}]},
-                    "valueQuantity": {"value": Decimal("120")},
-                },
-                {
-                    "code": {"coding": [{"display": "Diastolic Blood Pressure"}]},
-                    "valueQuantity": {"value": Decimal("80")},
-                },
-            ],
-        ),
-    ]
-    return observations
-
-
-@pytest.fixture
 def expected_df():
     values = {
         "id": ["1", "2", "3"],

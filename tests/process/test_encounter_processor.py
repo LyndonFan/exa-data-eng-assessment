@@ -26,64 +26,6 @@ def processor(mock_mongo, mock_sql):
     processor = EncounterProcessor()
     yield processor
 
-
-@pytest.fixture
-def encounters():
-    return [
-        Encounter(
-            id="1",
-            status="final",
-            subject={"reference": "urn:uuid:123"},
-            class_fhir={"code": "IMP"},
-            period={"start": datetime(2022, 1, 1), "end": datetime(2022, 1, 2)},
-            location=[
-                {
-                    "location": {
-                        "reference": "Location?MadeUp",
-                        "display": "MadeUp Location",
-                    }
-                }
-            ],
-            reasonCode=[
-                {
-                    "coding": [
-                        {
-                            "system": "http://snomed.info/sct",
-                            "code": "123",
-                            "display": "MadeUp Reason",
-                        }
-                    ]
-                }
-            ],
-        ),
-        Encounter(
-            id="2",
-            status="cancelled",
-            subject={"reference": "urn:uuid:456"},
-            class_fhir={"code": "IMP"},
-            period={"start": datetime(2022, 4, 1), "end": datetime(2022, 4, 2)},
-            location=[
-                {
-                    "location": {
-                        "reference": "Location?AnotherOne",
-                        "display": "Another One",
-                    }
-                }
-            ],
-            reasonCode=[
-                {
-                    "coding": [
-                        {
-                            "system": "http://snomed.info/sct",
-                            "code": "789",
-                            "display": "Another Reason",
-                        }
-                    ]
-                }
-            ],
-        )
-    ]
-
 @pytest.fixture
 def expected_df():
     values = {
