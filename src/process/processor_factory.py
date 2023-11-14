@@ -33,7 +33,7 @@ class ProcessorFactory:
             if resource_type not in groups:
                 groups[resource_type] = []
             groups[resource_type].append(i)
-        
+
         # TODO: A sort of clever way to include dependencies
         # and generate order from DAG
         if "Patient" in groups:
@@ -41,7 +41,9 @@ class ProcessorFactory:
         if "Encounter" in groups:
             cls.process_single_type([data[i] for i in groups["Encounter"]], "Encounter")
         if "Observation" in groups:
-            cls.process_single_type([data[i] for i in groups["Observation"]], "Observation")
+            cls.process_single_type(
+                [data[i] for i in groups["Observation"]], "Observation"
+            )
         for resource_type, indexes in groups.items():
             if resource_type in ["Patient", "Encounter", "Observation"]:
                 continue

@@ -24,6 +24,7 @@ class Patient(Base):
     encounters: Mapped[list["Encounter"]] = relationship(back_populates="patient")
     observations: Mapped[list["Observation"]] = relationship(back_populates="patient")
 
+
 class Encounter(Base):
     __tablename__ = "encounter"
 
@@ -39,6 +40,7 @@ class Encounter(Base):
 
     observations: Mapped[list["Observation"]] = relationship(back_populates="encounter")
 
+
 class Observtaion(Base):
     __tablename__ = "observation"
 
@@ -52,6 +54,7 @@ class Observtaion(Base):
     effective_datetime = mapped_column(DateTime, nullable=True)
     issued = mapped_column(DateTime, nullable=True)
     values = mapped_column(JSON)
+
 
 if __name__ == "__main__":
     from src.db.postgresql import PostgreSQL

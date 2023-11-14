@@ -1,4 +1,3 @@
-from typing import Optional
 import polars as pl
 from fhir.resources.R4B.observation import Observation
 
@@ -17,7 +16,7 @@ class ObservationProcessor(BaseProcessor):
     def process(self, data: list[Observation]):
         super().process(data)
         self.save_to_sql(data)
-    
+
     def process_data_into_frame(self, data: list[Observation]) -> pl.DataFrame:
         dcts = [e.dict() for e in data]
         """
@@ -43,7 +42,7 @@ class ObservationProcessor(BaseProcessor):
             "issued",
             "valueQuantity",
             "valueCodeableConcept",
-            "component"
+            "component",
         ]
         dcts = [{f: d.get(f) for f in FIELDS} for d in dcts]
         for d in dcts:
@@ -54,25 +53,32 @@ class ObservationProcessor(BaseProcessor):
                 d["component"] = [d.pop("valueQuantity")]
             if d["valueCodeableConcept"]:
                 d["component"] = [d.pop("valueCodeableConcept")]
-        df = polars.DataFrame(dcts)
+        df = pl.DataFrame(dcts)
         df = df.with_columns(
             [
                 pl.col("code").coding.list.get(0).display.alias("observation_type"),
-                pl.col("category").list.get(0).coding.list.get(0).display.alias("category"),
+                pl.col("category")
+                .list.get(0)
+                .coding.list.get(0)
+                .display.alias("category"),
                 (
-                    pl.col("subject").struct.field("reference")
+                    pl.col("subject")
+                    .struct.field("reference")
                     .str.strip_prefix("urn:uuid:")
                 ).alias("patient_id"),
                 (
-                    pl.col("encounter").struct.field("reference")
+                    pl.col("encounter")
+                    .struct.field("reference")
                     .str.strip_prefix("urn:uuid:")
                 ).alias("encounter_id"),
             ]
         )
-        df = df.drop(["code", "subject"]).rename({
-            "effectiveDateTime": "effective_datetime",
-            "component": "values",
-        })
+        df = df.drop(["code", "subject"]).rename(
+            {
+                "effectiveDateTime": "effective_datetime",
+                "component": "values",
+            }
+        )
         return df
 
     def save_to_sql(self, data: list[Observation]) -> None:

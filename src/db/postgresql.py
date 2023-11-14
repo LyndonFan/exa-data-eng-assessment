@@ -70,14 +70,10 @@ class PostgreSQL:
             self._connection.commit()
         return res
 
-    def copy_into_table(
-        self,
-        table_name: str,
-        df: pl.DataFrame
-    ):
+    def copy_into_table(self, table_name: str, df: pl.DataFrame):
         df.write_database(
             table_name,
-            con=os.environ["PSQL_URI"],
+            connection=os.environ["PSQL_URI"],
             if_exists="append",
             engine="sqlalchemy",
         )

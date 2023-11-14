@@ -63,7 +63,7 @@ class PatientProcessor(BaseProcessor):
                 elif name.use == "maiden":
                     dct["maiden_name"] = self._infer_name(name)
             res.append(dct)
-        
+
         return pl.DataFrame(res)
 
     def save_to_sql(self, data: list[Patient]) -> None:
