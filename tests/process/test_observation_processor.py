@@ -124,8 +124,16 @@ def expected_df():
             datetime(2022, 1, 4),
         ],
         "values": [
-            json.dumps([{"value": 120.0, "unit": "cm"}]),
-            json.dumps([{"coding": [{"display": "Fever"}]}]),
+            json.dumps([
+                {
+                    "code": {"coding": [{"display": "Height"}]},
+                    "valueQuantity": {"value": 120.0, "unit": "cm"},
+                }
+            ]),
+            json.dumps([{
+                "code": {"coding": [{"display": "Temperature"}]},
+                "valueCodeableConcept": {"coding": [{"display": "Fever"}]},
+            }]),
             json.dumps([
                 {
                     "code": {"coding": [{"display": "Systolic Blood Pressure"}]},
@@ -159,111 +167,3 @@ def test_process_data_into_frame_type_columns(processor, observations):
 def test_process_data_into_frame_correct_value(processor, observations, expected_df):
     result = processor.process_data_into_frame(observations)
     assert_frame_equal(result, expected_df, check_column_order=False, check_row_order=False)
-
-# def test_correct_extraction_of_fields():
-#     processor = ObservationProcessor()
-
-#     observations = [
-#         Observation(
-#             id="1",
-#             code={"coding": [{"display": "Blood Pressure"}]},
-#             status="final",
-#             subject={"reference": "urn:uuid:123"},
-#             encounter={"reference": "urn:uuid:456"},
-#             category={"coding": [{"display": "Vital Signs"}]},
-#             effectiveDateTime=datetime(2022, 1, 1),
-#             issued=datetime(2022, 1, 2),
-#             valueQuantity={"value":Decimal("120")},
-#             valueCodeableConcept=None,
-#             component=None,
-#         )
-#     ]
-
-#     result = processor.process_data_into_frame(observations)
-
-#     expected_values = {
-#         "observation_type": "Blood Pressure",
-#         "category": "Vital Signs",
-#         "patient_id": "123",
-#         "encounter_id": "456",
-#     }
-#     for column_name, expected_value in expected_values.items():
-#         assert result[column_name][0] == expected_value
-
-# def test_empty_list_of_observations():
-#     processor = ObservationProcessor()
-
-#     observations = []
-
-#     result = processor.process_data_into_frame(observations)
-
-#     assert len(result) == 0
-
-# def test_missing_or_incomplete_fields():
-#     processor = ObservationProcessor()
-
-#     observations = [
-#         Observation(
-#             id="1",
-#             code={"coding": [{"display": "Blood Pressure"}]},
-#             status="final",
-#             subject={"reference": "urn:uuid:123"},
-#             category={"coding": [{"display": "Vital Signs"}]},
-#             effectiveDateTime=datetime(2022, 1, 1),
-#             issued=datetime(2022, 1, 2),
-#         ),
-#         Observation(
-#             id="2",
-#             code={"coding": [{"display": "Temperature"}]},
-#             status="final",
-#             subject={"reference": "urn:uuid:789"},
-#             encounter={"reference": "urn:uuid:012"},
-#             category={"coding": [{"display": "Vital Signs"}]},
-#             effectiveDateTime=datetime(2022, 1, 3),
-#             issued=datetime(2022, 1, 4),
-#             valueQuantity=None,
-#             valueCodeableConcept={"coding": [{"display": "Fever"}]},
-#             component=None,
-#         ),
-#     ]
-
-#     result = processor.process_data_into_frame(observations)
-
-#     assert isinstance(result, pl.DataFrame)
-
-#     expected_columns = [
-#         "observation_type",
-#         "status",
-#         "category",
-#         "patient_id",
-#         "encounter_id",
-#         "effective_datetime",
-#         "issued",
-#         "values",
-#     ]
-#     assert result.columns == expected_columns
-
-# def test_null_values_in_nested_fields():
-#     processor = ObservationProcessor()
-
-#     observations = [
-#         Observation(
-#             id="1",
-#             code={"coding": [{"display": "Blood Pressure"}]},
-#             status="final",
-#             subject={"reference": "urn:uuid:123"},
-#             encounter={"reference": "urn:uuid:456"},
-#             category={"coding": [{"display": "Vital Signs"}]},
-#             effectiveDateTime=datetime(2022, 1, 1),
-#             issued=datetime(2022, 1, 2),
-#             valueQuantity=None,
-#             valueCodeableConcept=None,
-#             component=None,
-#         )
-#     ]
-
-#     result = processor.process_data_into_frame(observations)
-
-#     assert isinstance(result, pl.DataFrame)
-
-#     assert result["values"][0] is None

@@ -52,21 +52,32 @@ class ObservationProcessor(BaseProcessor):
             "valueCodeableConcept",
             "component",
         ]
-        dcts = [{f: d.get(f) for f in FIELDS} for d in dcts]
-        VALUE_COLUMNS = [
-            "valueQuantity",
-            "valueCodeableConcept",
-            "component",
-        ]
-        for d in dcts:
-            for c in VALUE_COLUMNS:
-                if d.get(c) is not None:
-                    d[c] = self._nested_replace_decimal(d[c])
-                    d[c] = json.dumps(d[c])
-                else:
-                    d[c] = None
+        dcts = [{field: d[field] for field in FIELDS if field in d} for d in dcts]
         
-        df = pl.DataFrame(dcts, schema_overrides={c: pl.Utf8 for c in VALUE_COLUMNS})
+        for d in dcts:
+            components = []
+            if d.get("component"):
+                d["component"] = self._nested_replace_decimal(d["component"])
+                components.extend(d.pop("component"))
+            if d.get("valueQuantity"):
+                d["valueQuantity"] = self._nested_replace_decimal(d["valueQuantity"])
+                components.append(
+                    {
+                        "code": d["code"],
+                        "valueQuantity": d.pop("valueQuantity"),
+                    }
+                )
+            if d.get("valueCodeableConcept"):
+                d["valueCodeableConcept"] = self._nested_replace_decimal(d["valueCodeableConcept"])
+                components.append(
+                    {
+                        "code": d["code"],
+                        "valueCodeableConcept": d.pop("valueCodeableConcept"),
+                    }
+                )
+            d["component"] = json.dumps(components)
+        
+        df = pl.DataFrame(dcts)
         df = df.with_columns(
             [
                 pl.col("code")
@@ -92,16 +103,10 @@ class ObservationProcessor(BaseProcessor):
                 ).alias("encounter_id"),
             ]
         )
-
-        df = df.with_columns(pl.coalesce([
-            pl.when(pl.col("valueQuantity").is_null()).then(pl.lit(None)).otherwise("[" + pl.col("valueQuantity") + "]"),
-            pl.when(pl.col("valueCodeableConcept").is_null()).then(pl.lit(None)).otherwise("[" + pl.col("valueCodeableConcept") + "]"),
-            pl.col("component"),
-        ]).alias("values"))
-
-        df = df.drop(["code", "subject", "encounter"] + VALUE_COLUMNS).rename(
+        df = df.drop(["code", "subject", "encounter"]).rename(
             {
-                "effectiveDateTime": "effective_datetime"
+                "effectiveDateTime": "effective_datetime",
+                "component": "values",
             }
         )
         return df
