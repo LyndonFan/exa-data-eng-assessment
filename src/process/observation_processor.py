@@ -1,4 +1,4 @@
-import decimal
+import json
 import polars as pl
 from fhir.resources.R4B.observation import Observation
 
@@ -17,19 +17,6 @@ class ObservationProcessor(BaseProcessor):
     def process(self, data: list[Observation]):
         super().process(data)
         self.save_to_sql(data)
-    
-    def _nested_replace_decimal(self, d):
-        # convert from decimal to float as polars can't decode it
-        # note this does lose some precision which may be problematic
-        if isinstance(d, dict):
-            for k, v in d.items():
-                if isinstance(v, decimal.Decimal):
-                    d[k] = float(v)
-                else:
-                    self._nested_replace_decimal(v)
-        elif isinstance(d, list):
-            for i in d:
-                self._nested_replace_decimal(i)
 
     def process_data_into_frame(self, data: list[Observation]) -> pl.DataFrame:
         dcts = [e.dict() for e in data]
@@ -54,8 +41,8 @@ class ObservationProcessor(BaseProcessor):
         for d in dcts:
             for c in VALUE_COLUMNS:
                 if d.get(c) is not None:
-                    d[c] = d[c].json()
-        self._nested_replace_decimal(dcts)
+                    d[c] = json.dumps(d[c])
+        
         df = pl.DataFrame(dcts)
         df = df.with_columns(
             [
@@ -96,5 +83,7 @@ class ObservationProcessor(BaseProcessor):
         return df
 
     def save_to_sql(self, data: list[Observation]) -> None:
+        print(f"Start processing {len(data)} observations into sql")
         df = self.process_data_into_frame(data)
+        print(f"Start uploading to sql for observations")
         self.sql_db.copy_into_table(table_name="observation", df=df, json_columns=["values"])
