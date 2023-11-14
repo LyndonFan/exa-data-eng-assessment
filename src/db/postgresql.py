@@ -1,7 +1,9 @@
 import os
 import psycopg2
 import polars as pl
-
+from typing import Optional
+from sqlalchemy import create_engine
+from sqlalchemy.types import JSON
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -70,10 +72,26 @@ class PostgreSQL:
             self._connection.commit()
         return res
 
-    def copy_into_table(self, table_name: str, df: pl.DataFrame):
-        df.write_database(
+    def copy_into_table(self, table_name: str, df: pl.DataFrame, json_columns: Optional[list[str]] = None):
+        if json_columns is None:
+            json_columns = []
+        if not json_columns:
+            df.write_database(
+                table_name,
+                connection=os.environ["PSQL_URI"],
+                if_exists="append",
+                engine="sqlalchemy",
+            )
+            return
+        pd_df = df.to_pandas()
+        engine = create_engine(os.environ["PSQL_URI"])
+        pd_df.to_sql(
             table_name,
-            connection=os.environ["PSQL_URI"],
+            con=engine,
             if_exists="append",
-            engine="sqlalchemy",
+            index=False,
+            dtype={
+                col: JSON
+                for col in json_columns
+            }
         )
