@@ -108,7 +108,7 @@ def observations():
 def expected_df():
     values = {
         "id": ["1", "2", "3"],
-        "code": ["Height", "Temperature", "Blood Pressure"],
+        "observation_type": ["Height", "Temperature", "Blood Pressure"],
         "status": ["final", "final", "final"],
         "patient_id": ["123", "789", "789"],
         "encounter_id": ["456", "012", "012"],
@@ -145,7 +145,7 @@ def test_process_data_into_frame_type_columns(processor, observations):
     assert isinstance(result, pl.DataFrame)
     expected_columns = [
         "id",
-        "code",
+        "observation_type",
         "status",
         "patient_id",
         "encounter_id",

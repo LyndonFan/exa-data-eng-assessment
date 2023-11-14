@@ -73,7 +73,7 @@ class ObservationProcessor(BaseProcessor):
                 .struct.field('coding')
                 .list.get(0)
                 .struct.field('display')
-                .alias("code"),
+                .alias("observation_type"),
                 pl.col("category")
                 .list.get(0)
                 .struct.field('coding')
@@ -98,8 +98,8 @@ class ObservationProcessor(BaseProcessor):
             pl.when(pl.col("valueCodeableConcept").is_null()).then(pl.lit(None)).otherwise("[" + pl.col("valueCodeableConcept") + "]"),
             pl.col("component"),
         ]).alias("values"))
-        
-        df = df.drop(["subject", "encounter"] + VALUE_COLUMNS).rename(
+
+        df = df.drop(["code", "subject", "encounter"] + VALUE_COLUMNS).rename(
             {
                 "effectiveDateTime": "effective_datetime"
             }
