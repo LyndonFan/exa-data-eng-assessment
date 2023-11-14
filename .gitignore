@@ -9,7 +9,8 @@
 !data/*.json
 
 # local storage of keys / credentials
-.env
+.env*
+!.env*.template
 .keys/
 *.txt
 !requirements.txt

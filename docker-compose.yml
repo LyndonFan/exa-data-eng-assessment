@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+    fhir-data-processor:
+        container_name: fhir-ingestor
+        image: fhir-ingestion:latest
+        env_file: .env
+        environment:
+            MONGO_URI: $MONGO_URI
