@@ -1,3 +1,4 @@
+import decimal
 import json
 import polars as pl
 from fhir.resources.R4B.observation import Observation
@@ -18,11 +19,30 @@ class ObservationProcessor(BaseProcessor):
         super().process(data)
         self.save_to_sql(data)
 
+    
+    def _nested_replace_decimal(self, d):
+        # convert from decimal to float as polars can't decode it
+        # note this does lose some precision which may be problematic
+        if isinstance(d, dict):
+            for k, v in d.items():
+                if isinstance(v, decimal.Decimal):
+                    d[k] = float(v)
+                else:
+                    d[k] = self._nested_replace_decimal(v)
+        elif isinstance(d, list):
+            for i,v in enumerate(d):
+                if isinstance(v, decimal.Decimal):
+                    d[i] = float(v)
+                else:
+                    d[i] = self._nested_replace_decimal(v)
+        return d
+
     def process_data_into_frame(self, data: list[Observation]) -> pl.DataFrame:
         dcts = [e.dict() for e in data]
         FIELDS = [
             "id",
             "code",
+            "status",
             "subject",
             "encounter",
             "category",
@@ -41,6 +61,7 @@ class ObservationProcessor(BaseProcessor):
         for d in dcts:
             for c in VALUE_COLUMNS:
                 if d.get(c) is not None:
+                    d[c] = self._nested_replace_decimal(d[c])
                     d[c] = json.dumps(d[c])
         
         df = pl.DataFrame(dcts)
@@ -70,8 +91,8 @@ class ObservationProcessor(BaseProcessor):
             ]
         )
         df = df.with_columns(pl.coalesce(
-            pl.when(pl.col("valueQuantity").is_null).then(pl.lit(None)).otherwise("[" + pl.col("valueQuantity") + "]"),
-            pl.when(pl.col("valueCodeableConcept").is_null).then(pl.lit(None)).otherwise("[" + pl.col("valueCodeableConcept") + "]"),
+            pl.when(pl.col("valueQuantity").is_null()).then(pl.lit(None)).otherwise("[" + pl.col("valueQuantity") + "]"),
+            pl.when(pl.col("valueCodeableConcept").is_null()).then(pl.lit(None)).otherwise("[" + pl.col("valueCodeableConcept") + "]"),
             pl.col("component"),
         ).alias("values"))
         df = df.drop(["code", "subject"] + VALUE_COLUMNS).rename(

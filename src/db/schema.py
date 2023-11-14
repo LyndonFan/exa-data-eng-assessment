@@ -46,6 +46,7 @@ class Observtaion(Base):
 
     id: Mapped[str] = mapped_column(primary_key=True)
     code: Mapped[str]
+    status: Mapped[str]
     patient: Mapped[Patient] = relationship(back_populates="observations")
     patient_id: Mapped[str]
     encounter: Mapped[Encounter] = relationship(back_populates="observations")
