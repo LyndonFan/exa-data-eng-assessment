@@ -34,3 +34,9 @@ build-backend = "poetry.core.masonry.api"
 [tool.ruff]
 [tool.ruff.lint.extend-per-file-ignores]
 "__init__.py" = ["E402", "F401"]
+
+[tool.coverage.run]
+omit = [
+  "tests/*",
+  "scripts/*"
+]
