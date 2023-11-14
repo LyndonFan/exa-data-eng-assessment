@@ -6,3 +6,5 @@ services:
         env_file: .env
         environment:
             MONGO_URI: $MONGO_URI
+        volumes:
+            - ${PSQL_SSL_ROOT_CERT}:/app/${PSQL_SSL_ROOT_CERT}

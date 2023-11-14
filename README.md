@@ -55,5 +55,7 @@ To do this with the provided data, for example, run
 
 1. Create the Mongo and SQL databases as above.
 2. Create the .env file as above.
-3. Run `docker build -t <YOUR_IMAGE_NAME>`
-4. Run `docker run --env-file ".env" <YOUR_IMAGE_NAME>`
+3. Run `docker build -t <YOUR_IMAGE_NAME> .`
+4. Run `docker-compose up`
+
+Note the image will mount the secret file at `$PSQL_SSL_ROOT_CERT` to the same place in the image. It is noted this isn't best practice, but the author was unable to figure out docker secrets proper in the given timeframe.
