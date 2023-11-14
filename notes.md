@@ -161,3 +161,21 @@ Things done by code:
 -   Encounter
     -   most frequently referenced resource
         -   resource A "references" B if A has a (nested) field which points to B's id
+    -   also referenced by observations
+
+## Final Day Checkbox
+
+### High priority
+
+-   [ ] fix pandas not default handle list
+    -   backup plan: ignore components, only parse valueQuantity/valueCodeableConcept
+-   [ ] Documentation
+    -   [ ] Usage
+    -   [ ] Mongo database structure
+    -   [ ] PSQL database structure
+    -   [ ] Next steps
+
+### Medium priority
+
+-   [ ] Dockerise the whole thing
+-   [ ] some more unit tests
