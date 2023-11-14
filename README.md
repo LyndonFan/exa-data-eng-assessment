@@ -14,14 +14,14 @@ This is a project that processes and stores FHIR data.
 
 ### Databases
 
-Regardless of which method is used below, we first need to create the databases to store the data.
+Regardless of which method is used below, we first need to create the databases to store the data. Keep note of your credentials after creating.
 
--   a Mongo database. Keep note of your credentials.
--   a SQL database.
+-   a Mongo database.
+-   a PostgreSQL database or CockroachDB. (For other SQL databases, please also install the corresponding library/driver after activating the virtual environment.)
 
 ### Populating the .env File
 
-The .env file is used to store various variables. Here it is used to store the database details (though the author acknowledges this may not be the most secure method). See the .env.template file for reference.
+The .env file is used to store various variables. Here it is used to store the database details (though the author acknowledges this may not be the most secure method). See the [.env.template](/.env.template) file for reference.
 
 ### From Source
 
