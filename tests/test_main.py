@@ -95,8 +95,13 @@ def mock_folder(mocker):
     yield folder
     shutil.rmtree(folder)
 
-def test_main(mock_folder, mock_mongo, mock_sql):
-    main(Path("tests/fixtures/bundle_transaction.json"))
+@pytest.mark.parametrize("pass_in_folder", [True, False])
+def test_main(mock_folder, mock_mongo, mock_sql, pass_in_folder):
+    file_path = Path("tests/fixtures/bundle_transaction.json")
+    if pass_in_folder:
+        main(file_path.parent)
+    else:
+        main(file_path)
 
     today_date = datetime.today().strftime("%Y-%m-%d")
     inner_folder = mock_folder / f"upload_date={today_date}"
