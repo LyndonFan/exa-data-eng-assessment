@@ -18,7 +18,7 @@ class EncounterProcessor(BaseProcessor):
         self.save_to_sql(data)
 
     def process_data_into_frame(self, data: list[Encounter]) -> pl.DataFrame:
-        df = pl.DataFrame([e.dict() for e in data])
+        df = pl.DataFrame([e.dict(exclude_none=False) for e in data])
         df = df.select(
             [
                 pl.col("id"),
