@@ -30,6 +30,7 @@ class EncounterProcessor(BaseProcessor):
                 pl.col("reasonCode"),
             ]
         )
+
         df = df.with_columns(
             [
                 pl.col("class").struct.field("code").alias("class_code"),
@@ -40,25 +41,40 @@ class EncounterProcessor(BaseProcessor):
                 ).alias("patient_id"),
                 pl.col("period").struct.field("start").alias("period_start"),
                 pl.col("period").struct.field("end").alias("period_end"),
-                (
-                    pl.when(pl.col("reasonCode").is_null())
-                    .then(pl.lit(None))
-                    .otherwise(
-                        pl.col("reasonCode")
-                        .list.get(0)
-                        .struct.field("coding")
-                        .list.get(0)
-                        .struct.field("display")
-                    )
-                ).alias("reason"),
-                (
+            ]
+        )
+
+        if df["reasonCode"].is_not_null().any():
+            df = df.with_columns(
+                pl.when(pl.col("reasonCode").is_null())
+                .then(pl.lit(None))
+                .otherwise(
+                    pl.col("reasonCode")
+                    .list.get(0)
+                    .struct.field("coding")
+                    .list.get(0)
+                    .struct.field("code")
+                )
+                .alias("reason")
+            )
+        else:
+            df = df.with_columns(pl.lit(None).cast(pl.Utf8).alias("reason"))
+        
+        if df["location"].is_not_null().any():
+            df = df.with_columns(
+                pl.when(pl.col("location").is_null())
+                .then(pl.lit(None))
+                .otherwise(
                     pl.col("location")
                     .list.get(0)
                     .struct.field("location")
                     .struct.field("display")
-                ).alias("location"),
-            ]
-        )
+                )
+                .alias("location")
+            )
+        else:
+            df = df.with_columns(pl.col("location").cast(pl.Utf8))
+        
         df = df.drop(["subject", "class", "period", "reasonCode"])
         return df
 
