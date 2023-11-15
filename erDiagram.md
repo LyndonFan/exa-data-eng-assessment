@@ -16,7 +16,7 @@ erDiagram
 
   "Encounter" {
     string id PK
-    status string
+    string status
     string patient_id FK
     string class_code
     datetime period_start
@@ -27,7 +27,8 @@ erDiagram
 
   "Observation" {
     string id PK
-    string code
+    string observation_type
+    string status
     string patient_id FK
     string encounter_id FK
     string category
@@ -36,7 +37,7 @@ erDiagram
     JSON values
   }
 
-  "Patient" ||--o{ "Encounter" : "has"
-  "Patient" ||--o{ "Observation" : "has"
-  "Encounter" ||--o{ "Observation" : "has"
+  "Patient" ||--o{ "Encounter" : ""
+  "Patient" ||--o{ "Observation" : ""
+  "Encounter" ||--o{ "Observation" : ""
 ```
