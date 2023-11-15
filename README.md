@@ -11,7 +11,7 @@ This is a project that processes and stores FHIR data. Given a folder of jsons, 
 ### Quickstart
 
 1. Set up a Mongo and a Postgres database.
-2. Using.env.template as a reference, create and populate a new .env file.
+2. Using .env.template as a reference, create and populate a new .env file.
 3. Create a new virtual environment using venv and requirements.txt or poetry and pyproject.toml
 4. Run `python -m src.db.schema` to set up SQL tables.
 5. Run `python main.py data` for the main pipeline.
@@ -34,9 +34,10 @@ After downloading this repository, create a new virtual environment by
 ```bash
 python -m venv .venv
 source .venv/bin/activate
+pip install  -r requirements.txt
 ```
 
-Alternatively, if you use poetry, you can do
+Alternatively, if you use [poetry](https://python-poetry.org/), you can do
 
 ```bash
 poetry shell
