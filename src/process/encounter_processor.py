@@ -18,18 +18,18 @@ class EncounterProcessor(BaseProcessor):
         self.save_to_sql(data)
 
     def process_data_into_frame(self, data: list[Encounter]) -> pl.DataFrame:
-        df = pl.DataFrame([e.dict(exclude_none=False) for e in data])
-        df = df.select(
-            [
-                pl.col("id"),
-                pl.col("status"),
-                pl.col("class"),
-                pl.col("subject"),
-                pl.col("period"),
-                pl.col("location"),
-                pl.col("reasonCode"),
-            ]
-        )
+        dcts = [e.dict() for e in data]
+        FIELDS = [
+            "id",
+            "status",
+            "class",
+            "subject",
+            "period",
+            "location",
+            "reasonCode",
+        ]
+        dcts = [{field: d.get(field) for field in FIELDS} for d in dcts]
+        df = pl.DataFrame(dcts)
 
         df = df.with_columns(
             [
