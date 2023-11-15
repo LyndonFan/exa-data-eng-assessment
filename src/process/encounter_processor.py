@@ -53,7 +53,7 @@ class EncounterProcessor(BaseProcessor):
                     .list.get(0)
                     .struct.field("coding")
                     .list.get(0)
-                    .struct.field("code")
+                    .struct.field("display")
                 )
                 .alias("reason")
             )
