@@ -1,10 +1,14 @@
 # Documentation
 
-## Overall Code Logic
+This page is for explaining what the code does and any associated decisions. For running the code, see [README.md].
 
-## Storage Architecture
+## Overall Code Logic & Storage
 
-The data is stored in 3 locations and formats, each with their own purposes.
+### Overall Logic
+
+1. Make a copy of the raw files for record keeping.
+2. Extract the inner resources, and save them in Mongo. Also generate a lookup of id to resource type.
+3. For specific resource types (Patient, Encounter, Observation), process them to get useful fields and save them in a SQL database.
 
 ### JSON files
 
