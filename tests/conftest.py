@@ -8,3 +8,5 @@ def no_actual_mongo(mocker):
 def no_actual_sql(mocker):
     mocker.patch("psycopg2.connect")
     mocker.patch("sqlalchemy.create_engine")
+    mocker.patch("pandas.DataFrame.to_sql", return_value=None)
+    mocker.patch("polars.DataFrame.write_database", return_value=None)
