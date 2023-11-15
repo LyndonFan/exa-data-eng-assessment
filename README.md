@@ -1,6 +1,10 @@
-# Lyndon Fan's Submission
+# Processing FHIR Data
 
-This is a project that processes and stores FHIR data.
+This is a project that processes and stores FHIR data. Given a folder of jsons, we load them into Mongo and SQL databases like so:
+
+![screenshot of mongo collection, listing collections on the left and showing the Claims collection](img/mongo_showcase.png)
+
+![screenshot of cockroachdb SQL shell, showing tables and running a query](img/sql_showcase.png)
 
 ## Usage
 
