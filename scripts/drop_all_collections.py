@@ -1,5 +1,6 @@
-import pymongo
 import os
+import logging
+import pymongo
 
 from dotenv import load_dotenv
 
@@ -12,12 +13,21 @@ def drop_all_collections():
     client = pymongo.MongoClient(uri)
     database = client.get_database(database_name)
     collection_names = database.list_collection_names()
-    print(f"Found {len(collection_names)} collection(s)")
+    logging.info(f"Found {len(collection_names)} collection(s)")
     for collection_name in database.list_collection_names():
-        print(f"Dropping {collection_name}", end="...")
+        logging.info(f"Dropping {collection_name}", end="...")
         database.drop_collection(collection_name)
-        print("done")
+        logging.info("done")
 
 
 if __name__ == "__main__":
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logger = logging.getLogger()
+    for handler in logger.handlers:
+        logger.removeHandler(handler)
+    timed_handler = logging.StreamHandler()
+    timed_handler.setFormatter(formatter)
+    logger.addHandler(timed_handler)
+    logger.setLevel(logging.INFO)
+    
     drop_all_collections()

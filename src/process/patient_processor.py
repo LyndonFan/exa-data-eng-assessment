@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 from fhir.resources.R4B.patient import Patient
 from fhir.resources.R4B.humanname import HumanName
@@ -67,7 +68,7 @@ class PatientProcessor(BaseProcessor):
         return pl.DataFrame(res)
 
     def save_to_sql(self, data: list[Patient]) -> None:
-        print(f"Start processing {len(data)} patients into sql")
+        logging.info(f"Start processing {len(data)} patients into sql")
         df = self.process_data_into_frame(data)
-        print("Start uploading to sql for patients")
+        logging.info("Start uploading to sql for patients")
         self.sql_db.copy_into_table(table_name="patient", df=df)

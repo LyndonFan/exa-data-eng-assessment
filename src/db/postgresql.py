@@ -1,5 +1,6 @@
 import os
 import json
+import logging
 import psycopg2
 import polars as pl
 from typing import Optional
@@ -40,8 +41,8 @@ class PostgreSQL:
                 sslrootcert=self.sslrootcert,
             )
         except Exception as e:
-            print(f"Error connecting to PostgreSQL: {e}")
-            print("Trying sslmode=require...")
+            logging.info(f"Error connecting to PostgreSQL: {e}")
+            logging.info("Trying sslmode=require...")
             self._connection = psycopg2.connect(
                 host=self.host,
                 port=self.port,

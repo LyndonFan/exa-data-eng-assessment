@@ -1,33 +1,52 @@
+import os
+import argparse
+import logging
 from pathlib import Path
 
 from src.extract import Extractor
 from src.process import ProcessorFactory
 
+from dotenv import load_dotenv
+load_dotenv()
 
 def main(filepath: Path) -> None:
-    print(f"Start processing {filepath}")
+    logging.info(f"Start processing {filepath}")
     documents = []
     if filepath.is_dir():
         for path in filepath.rglob("*.json"):
-            print(f"Processing {path}")
-            print("Extracting...")
+            logging.info(f"Processing {path}")
+            logging.info("Extracting...")
             data = Extractor().extract(path)
-            print(f"Done for {path}")
+            logging.info(f"Done for {path}")
             documents.extend(data)
     elif filepath.is_file() and filepath.suffix == ".json":
-        print(f"Processing {filepath}")
-        print("Extracting...")
+        logging.info(f"Processing {filepath}")
+        logging.info("Extracting...")
         data = Extractor().extract(filepath)
         documents = data
-        print("Done")
+        logging.info("Done")
     else:
         raise ValueError(f"Unsupported file type: {filepath}")
-    print("Processing & Uploading...")
+    logging.info("Processing & Uploading...")
     ProcessorFactory.batch_process(documents)
-    print("Done")
+    logging.info("Done")
 
 
 if __name__ == "__main__":
-    import sys
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logger = logging.getLogger()
+    for handler in logger.handlers:
+        logger.removeHandler(handler)
+    timed_handler = logging.StreamHandler()
+    timed_handler.setFormatter(formatter)
+    logger.addHandler(timed_handler)
+    logger.setLevel(logging.INFO)
 
-    main(Path(sys.argv[1]))
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "path",
+        help="Path to the json file or directory of them to process",
+        type=str
+    )
+    args = parser.parse_args()
+    main(Path(args.path))

@@ -1,5 +1,6 @@
 import decimal
 import json
+import logging
 import polars as pl
 from fhir.resources.R4B.observation import Observation
 
@@ -115,9 +116,9 @@ class ObservationProcessor(BaseProcessor):
         return df
 
     def save_to_sql(self, data: list[Observation]) -> None:
-        print(f"Start processing {len(data)} observations into sql")
+        logging.info(f"Start processing {len(data)} observations into sql")
         df = self.process_data_into_frame(data)
-        print("Start uploading to sql for observations")
+        logging.info("Start uploading to sql for observations")
         self.sql_db.copy_into_table(
             table_name="observation", df=df, json_columns=["values"]
         )

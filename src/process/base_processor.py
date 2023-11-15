@@ -1,3 +1,4 @@
+import logging
 import orjson
 from fhir.resources.R4B.resource import Resource
 
@@ -34,7 +35,7 @@ class BaseProcessor:
     def process(self, data: list[Resource]):
         if not data:
             return
-        print(f"Start processing {len(data)} {data[0].resource_type}")
+        logging.info(f"Start processing {len(data)} {data[0].resource_type}")
         resource_type, to_save_data, id_references = self.process_data_for_mongo(data)
-        print(f"Start uploading to mongo for {resource_type}")
+        logging.info(f"Start uploading to mongo for {resource_type}")
         self.upload_to_mongo(resource_type, to_save_data, id_references)
