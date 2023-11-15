@@ -51,7 +51,7 @@ class ObservationProcessor(BaseProcessor):
             "valueCodeableConcept",
             "component",
         ]
-        dcts = [{field: d[field] for field in FIELDS if field in d} for d in dcts]
+        dcts = [{field: d.get(field) for field in FIELDS} for d in dcts]
 
         for d in dcts:
             components = []
@@ -63,9 +63,10 @@ class ObservationProcessor(BaseProcessor):
                 components.append(
                     {
                         "code": d["code"],
-                        "valueQuantity": d.pop("valueQuantity"),
+                        "valueQuantity": d["valueQuantity"],
                     }
                 )
+            d.pop("valueQuantity")
             if d.get("valueCodeableConcept"):
                 d["valueCodeableConcept"] = self._nested_replace_decimal(
                     d["valueCodeableConcept"]
@@ -73,9 +74,10 @@ class ObservationProcessor(BaseProcessor):
                 components.append(
                     {
                         "code": d["code"],
-                        "valueCodeableConcept": d.pop("valueCodeableConcept"),
+                        "valueCodeableConcept": d["valueCodeableConcept"],
                     }
                 )
+            d.pop("valueCodeableConcept")
             d["component"] = json.dumps(components)
 
         df = pl.DataFrame(dcts)
@@ -104,7 +106,7 @@ class ObservationProcessor(BaseProcessor):
                 ).alias("encounter_id"),
             ]
         )
-        df = df.drop(["code", "subject", "encounter"]).rename(
+        df = df.drop(["code", "subject", "encounter", "valueCodeableConcept", "valueQuantity"]).rename(
             {
                 "effectiveDateTime": "effective_datetime",
                 "component": "values",
