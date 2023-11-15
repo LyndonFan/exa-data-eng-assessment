@@ -43,6 +43,8 @@ Here we perform specific modelling for 3 resources, namely:
 
 Note the schemas are written in `src/db/schema.py`, which are also used to create the tables for convenience. Below we explain their relationship and meaning.
 
+You can also see the [ER Diagram](ERDiagram.md) for a quick look of the relationships between tables.
+
 ### Patient
 
 | Column name       | Datatype | Required | Corresponding FHIR Field                      |
